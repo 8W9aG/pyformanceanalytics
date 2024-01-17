@@ -1,16 +1,27 @@
 """The Performance Analytics chart.ECDF function."""
-from typing import Optional, List
+from __future__ import annotations
 
 import pandas as pd
-from rpy2 import robjects
-from rpy2.robjects.vectors import StrVector, IntVector
+from PIL import Image
+from rpy2 import robjects as ro
 
-from ..rimports import ensure_packages_present, PERFORMANCE_ANALYTICS_PACKAGE
-from ..xts import xts_from_df
 from ..plot_img import plot_to_image
+from ..rimports import PERFORMANCE_ANALYTICS_PACKAGE, ensure_packages_present
+from ..xts import xts_from_df
 
 
-def ECDF(R: pd.DataFrame, main: Optional[str] = None, xlab: Optional[str] = None, ylab: Optional[str] = None, colorset: Optional[List[str]] = None, lwd: int = 1, lty: Optional[List[int]] = None, element_color: Optional[str] = None, xaxis: bool = True, yaxis: bool = True):
+def ECDF(
+    R: pd.DataFrame,
+    main: (str | None) = None,
+    xlab: (str | None) = None,
+    ylab: (str | None) = None,
+    colorset: (list[str] | None) = None,
+    lwd: int = 1,
+    lty: (list[int] | None) = None,
+    element_color: (str | None) = None,
+    xaxis: bool = True,
+    yaxis: bool = True,
+) -> Image.Image:
     """Calculate chart.ECDF."""
     ensure_packages_present([PERFORMANCE_ANALYTICS_PACKAGE])
     if main is None:
@@ -25,19 +36,21 @@ def ECDF(R: pd.DataFrame, main: Optional[str] = None, xlab: Optional[str] = None
         lty = [1, 2]
     if element_color is None:
         element_color = "darkgray"
-    with robjects.local_context() as lc:
-        return plot_to_image(lambda: robjects.r("chart.ECDF").rcall(
-            (
-                ("R", xts_from_df(R)),
-                ("main", main),
-                ("xlab", xlab),
-                ("ylab", ylab),
-                ("colorset", StrVector(colorset)),
-                ("lwd", lwd),
-                ("lty", IntVector(lty)),
-                ("element.color", element_color),
-                ("xaxis", xaxis),
-                ("yaxis", yaxis),
-            ),
-            lc,
-        ))
+    with ro.local_context() as lc:
+        return plot_to_image(
+            lambda: ro.r("chart.ECDF").rcall(  # type: ignore
+                (
+                    ("R", xts_from_df(R)),
+                    ("main", main),
+                    ("xlab", xlab),
+                    ("ylab", ylab),
+                    ("colorset", ro.vectors.StrVector(colorset)),
+                    ("lwd", lwd),
+                    ("lty", ro.vectors.IntVector(lty)),
+                    ("element.color", element_color),
+                    ("xaxis", xaxis),
+                    ("yaxis", yaxis),
+                ),
+                lc,
+            )
+        )

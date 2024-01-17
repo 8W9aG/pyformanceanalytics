@@ -1,33 +1,36 @@
 """The PerformanceAnalytics SortinoRatio function."""
-from typing import Optional
+from __future__ import annotations
 
 import pandas as pd
-from rpy2 import robjects
-from rpy2.robjects import pandas2ri
+from rpy2 import robjects as ro
 
-from .rimports import ensure_packages_present, PERFORMANCE_ANALYTICS_PACKAGE
+from .r_df import as_data_frame_or_float
+from .rimports import PERFORMANCE_ANALYTICS_PACKAGE, ensure_packages_present
 from .xts import xts_from_df
 
 
-def sortino_ratio(R: pd.DataFrame, MAR: float = 0.0, weights: Optional[pd.DataFrame] = None, threshold: Optional[str] = None, SE: bool = False) -> pd.DataFrame:
+def SortinoRatio(
+    R: pd.DataFrame,
+    MAR: float = 0.0,
+    weights: (pd.DataFrame | None) = None,
+    threshold: (str | None) = None,
+    SE: bool = False,
+) -> pd.DataFrame | float:
     """Calculate SortinoRatio."""
     ensure_packages_present([PERFORMANCE_ANALYTICS_PACKAGE])
     if threshold is None:
         threshold = "MAR"
-    with robjects.local_context() as lc:
-        with (robjects.default_converter + pandas2ri.converter).context():
-            return robjects.conversion.get_conversion().rpy2py(robjects.r("as.data.frame").rcall(
+    with ro.local_context() as lc:
+        return as_data_frame_or_float(
+            ro.r("SortinoRatio").rcall(  # type: ignore
                 (
-                    ("x", robjects.r("SortinoRatio").rcall(
-                        (
-                            ("R", xts_from_df(R)),
-                            ("MAR", MAR),
-                            ("weights", weights),
-                            ("threshold", threshold),
-                            ("SE", SE),
-                        ),
-                        lc,
-                    )),
+                    ("R", xts_from_df(R)),
+                    ("MAR", MAR),
+                    ("weights", weights),
+                    ("threshold", threshold),
+                    ("SE", SE),
                 ),
                 lc,
-            ))
+            ),
+            lc,
+        )

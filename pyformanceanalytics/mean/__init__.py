@@ -1,5 +1,6 @@
 """The mean module for the pyformance analytics code."""
+# ruff: noqa: F401
 from .geometric import geometric
+from .LCL import LCL
 from .stderr import stderr
-from .LCL import lcl
-from .UCL import ucl
+from .UCL import UCL

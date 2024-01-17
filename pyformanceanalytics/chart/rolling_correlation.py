@@ -1,34 +1,41 @@
 """The Performance Analytics chart.RollingCorrelation function."""
-from typing import Optional, List
+from __future__ import annotations
 
 import pandas as pd
-from rpy2 import robjects
-from rpy2.robjects.vectors import IntVector
+from PIL import Image
+from rpy2 import robjects as ro
 
-from ..rimports import ensure_packages_present, PERFORMANCE_ANALYTICS_PACKAGE
+from ..plot_img import plot_ro, plot_to_image
+from ..rimports import PERFORMANCE_ANALYTICS_PACKAGE, ensure_packages_present
 from ..xts import xts_from_df
-from ..plot_img import plot_to_image
 
 
-def rolling_correlation(Ra: pd.DataFrame, Rb: pd.DataFrame, width: int = 12, xaxis: bool = True, legend_loc: Optional[str] = None, colorset: Optional[List[int]] = None):
+def RollingCorrelation(
+    Ra: pd.DataFrame,
+    Rb: pd.DataFrame,
+    width: int = 12,
+    xaxis: bool = True,
+    legend_loc: (str | None) = None,
+    colorset: (list[int] | None) = None,
+) -> Image.Image:
     """Calculate chart.RollingCorrelation."""
     ensure_packages_present([PERFORMANCE_ANALYTICS_PACKAGE])
     if colorset is None:
         colorset = list(range(1, 12))
-    with robjects.local_context() as lc:
-        return plot_to_image(lambda: robjects.r("plot").rcall(
-            (
-                ("x", robjects.r("chart.RollingCorrelation").rcall(
+    with ro.local_context() as lc:
+        return plot_to_image(
+            lambda: plot_ro(
+                ro.r("chart.RollingCorrelation").rcall(  # type: ignore
                     (
                         ("Ra", xts_from_df(Ra)),
                         ("Rb", xts_from_df(Rb)),
                         ("width", width),
                         ("xaxis", xaxis),
                         ("legend.loc", legend_loc),
-                        ("colorset", IntVector(colorset))
+                        ("colorset", ro.vectors.IntVector(colorset)),
                     ),
                     lc,
-                )),
-            ),
-            lc,
-        ))
+                ),
+                lc,
+            )
+        )

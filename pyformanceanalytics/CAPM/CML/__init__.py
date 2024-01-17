@@ -1,3 +1,4 @@
 """The main module for the CAPM.CML section."""
-from .slope import slope
+# ruff: noqa: F401
 from .CML import CML
+from .slope import slope

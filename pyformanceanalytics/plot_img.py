@@ -1,14 +1,14 @@
 """Functions for converting a plot to a python image."""
 import tempfile
-from typing import Any, Callable
+from collections.abc import Callable
 
 from PIL import Image
-from rpy2 import robjects
+from rpy2 import robjects as ro
 
-from .rimports import import_package, GRDEVICES_PACKAGE
+from .rimports import GRDEVICES_PACKAGE, import_package
 
 
-def plot_to_image(plot_func: Callable[[], None]) -> Image:
+def plot_to_image(plot_func: Callable[[], None]) -> Image.Image:
     """Render an R plot to an image."""
     with tempfile.NamedTemporaryFile(suffix=".png") as temp_handle:
         path = temp_handle.name
@@ -18,3 +18,15 @@ def plot_to_image(plot_func: Callable[[], None]) -> Image:
         plot_func()
         grdevices.dev_off()
         return Image.open(path)
+
+
+def plot_ro(x: ro.RObject, env: ro.Environment) -> ro.RObject:
+    return ro.r("plot").rcall(  # type: ignore
+        (
+            (
+                "x",
+                x,
+            ),
+        ),
+        env,
+    )

@@ -1,35 +1,43 @@
 """The PerformanceAnalytics SharpeRatio function."""
-from typing import Optional
+from __future__ import annotations
 
 import pandas as pd
-from rpy2 import robjects
-from rpy2.robjects import pandas2ri
+from rpy2 import robjects as ro
 
-from .rimports import ensure_packages_present, PERFORMANCE_ANALYTICS_PACKAGE
+from .r_df import as_data_frame_or_float
+from .rimports import PERFORMANCE_ANALYTICS_PACKAGE, ensure_packages_present
+from .sharpe_ratio_function import SharpeRatioFunction
 from .xts import xts_from_df
 
 
-def sharpe_ratio(R: pd.DataFrame, Rf: Optional[pd.DataFrame] = None, p: float = 0.95, FUN: Optional[str] = None, weights: Optional[pd.DataFrame] = None, annualize: bool = False, SE: bool = False) -> pd.DataFrame:
+def SharpeRatio(
+    R: pd.DataFrame,
+    Rf: (pd.DataFrame | None) = None,
+    p: float = 0.95,
+    FUN: (str | SharpeRatioFunction | None) = None,
+    weights: (pd.DataFrame | None) = None,
+    annualize: bool = False,
+    SE: bool = False,
+) -> pd.DataFrame | float:
     """Calculate SharpeRatio."""
     ensure_packages_present([PERFORMANCE_ANALYTICS_PACKAGE])
     if FUN is None:
-        FUN = "StdDev"
-    with robjects.local_context() as lc:
-        with (robjects.default_converter + pandas2ri.converter).context():
-            return robjects.conversion.get_conversion().rpy2py(robjects.r("as.data.frame").rcall(
+        FUN = SharpeRatioFunction.STD_DEV
+    if isinstance(FUN, SharpeRatioFunction):
+        FUN = FUN.value
+    with ro.local_context() as lc:
+        return as_data_frame_or_float(
+            ro.r("SharpeRatio").rcall(  # type: ignore
                 (
-                    ("x", robjects.r("SharpeRatio").rcall(
-                        (
-                            ("R", xts_from_df(R)),
-                            ("Rf", 0 if Rf is None else xts_from_df(Rf)),
-                            ("p", p),
-                            ("FUN", FUN),
-                            ("weights", weights),
-                            ("annualize", annualize),
-                            ("SE", SE),
-                        ),
-                        lc,
-                    )),
+                    ("R", xts_from_df(R)),
+                    ("Rf", 0 if Rf is None else xts_from_df(Rf)),
+                    ("p", p),
+                    ("FUN", FUN),
+                    ("weights", weights),
+                    ("annualize", annualize),
+                    ("SE", SE),
                 ),
                 lc,
-            ))
+            ),
+            lc,
+        )

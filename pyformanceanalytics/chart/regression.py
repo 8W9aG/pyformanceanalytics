@@ -1,37 +1,39 @@
 """The Performance Analytics chart.Regression function."""
-from typing import Optional, List
+# pylint: disable=too-many-arguments
+from __future__ import annotations
 
 import pandas as pd
-from rpy2 import robjects
-from rpy2.robjects.vectors import StrVector, IntVector
+from PIL import Image
+from rpy2 import robjects as ro
 
-from ..rimports import ensure_packages_present, PERFORMANCE_ANALYTICS_PACKAGE
-from ..xts import xts_from_df
 from ..plot_img import plot_to_image
+from ..rimports import PERFORMANCE_ANALYTICS_PACKAGE, ensure_packages_present
+from ..xts import xts_from_df
 
 
-def regression(
-        Ra: pd.DataFrame,
-        Rb: pd.DataFrame,
-        Rf: Optional[pd.DataFrame] = None,
-        excess_returns: bool = False,
-        reference_grid: bool = True,
-        main: Optional[str] = None,
-        ylab: Optional[str] = None,
-        xlab: Optional[str] = None,
-        colorset: Optional[List[int]] = None,
-        symbolset: Optional[List[int]] = None,
-        element_color: Optional[str] = None,
-        legend_loc: Optional[str] = None,
-        ylog: bool = False,
-        fit: Optional[List[str]] = None,
-        span: float = 2.0 / 3.0,
-        degree: int = 1,
-        family: Optional[List[str]] = None,
-        evaluation: int = 50,
-        legend_cex: float = 0.8,
-        cex: float = 0.8,
-        lwd: int = 2):
+def Regression(
+    Ra: pd.DataFrame,
+    Rb: pd.DataFrame,
+    Rf: (pd.DataFrame | None) = None,
+    excess_returns: bool = False,
+    reference_grid: bool = True,
+    main: (str | None) = None,
+    ylab: (str | None) = None,
+    xlab: (str | None) = None,
+    colorset: (list[int] | None) = None,
+    symbolset: (list[int] | None) = None,
+    element_color: (str | None) = None,
+    legend_loc: (str | None) = None,
+    ylog: bool = False,
+    fit: (list[str] | None) = None,
+    span: float = 2.0 / 3.0,
+    degree: int = 1,
+    family: (list[str] | None) = None,
+    evaluation: int = 50,
+    legend_cex: float = 0.8,
+    cex: float = 0.8,
+    lwd: int = 2,
+) -> Image.Image:
     """Calculate chart.Regression."""
     ensure_packages_present([PERFORMANCE_ANALYTICS_PACKAGE])
     if main is None:
@@ -46,30 +48,32 @@ def regression(
         fit = ["loess", "linear", "conditional"]
     if family is None:
         family = ["symmetric", "gaussian"]
-    with robjects.local_context() as lc:
-        return plot_to_image(lambda: robjects.r("chart.Regression").rcall(
-            (
-                ("Ra", xts_from_df(Ra)),
-                ("Rb", xts_from_df(Rb)),
-                ("Rf", 0 if Rf is None else xts_from_df(Rf)),
-                ("excess.returns", excess_returns),
-                ("reference.grid", reference_grid),
-                ("main", main),
-                ("ylab", ylab),
-                ("xlab", xlab),
-                ("colorset", IntVector(colorset)),
-                ("symbolset", IntVector(symbolset)),
-                ("element.color", element_color),
-                ("legend.loc", legend_loc),
-                ("ylog", ylog),
-                ("fit", StrVector(fit)),
-                ("span", span),
-                ("degree", degree),
-                ("family", StrVector(family)),
-                ("evaluation", evaluation),
-                ("legend.cex", legend_cex),
-                ("cex", cex),
-                ("lwd", lwd),
-            ),
-            lc,
-        ))
+    with ro.local_context() as lc:
+        return plot_to_image(
+            lambda: ro.r("chart.Regression").rcall(  # type: ignore
+                (
+                    ("Ra", xts_from_df(Ra)),
+                    ("Rb", xts_from_df(Rb)),
+                    ("Rf", 0 if Rf is None else xts_from_df(Rf)),
+                    ("excess.returns", excess_returns),
+                    ("reference.grid", reference_grid),
+                    ("main", main),
+                    ("ylab", ylab),
+                    ("xlab", xlab),
+                    ("colorset", ro.vectors.IntVector(colorset)),
+                    ("symbolset", ro.vectors.IntVector(symbolset)),
+                    ("element.color", element_color),
+                    ("legend.loc", legend_loc),
+                    ("ylog", ylog),
+                    ("fit", ro.vectors.StrVector(fit)),
+                    ("span", span),
+                    ("degree", degree),
+                    ("family", ro.vectors.StrVector(family)),
+                    ("evaluation", evaluation),
+                    ("legend.cex", legend_cex),
+                    ("cex", cex),
+                    ("lwd", lwd),
+                ),
+                lc,
+            )
+        )

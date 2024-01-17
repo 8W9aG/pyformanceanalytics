@@ -1,29 +1,31 @@
 """The Performance Analytics chart.Drawdown function."""
-from typing import Optional
+from __future__ import annotations
 
 import pandas as pd
-from rpy2 import robjects
-from rpy2.robjects.vectors import StrVector
+from PIL import Image
+from rpy2 import robjects as ro
 
-from ..rimports import ensure_packages_present, PERFORMANCE_ANALYTICS_PACKAGE
+from ..plot_img import plot_ro, plot_to_image
+from ..rimports import PERFORMANCE_ANALYTICS_PACKAGE, ensure_packages_present
 from ..xts import xts_from_df
-from ..plot_img import plot_to_image
 
 
-def drawdown(R: pd.DataFrame, geometric: bool = True, legend_loc: Optional[str] = None):
+def Drawdown(
+    R: pd.DataFrame, geometric: bool = True, legend_loc: (str | None) = None
+) -> Image.Image:
     """Calculate chart.Drawdown."""
     ensure_packages_present([PERFORMANCE_ANALYTICS_PACKAGE])
-    with robjects.local_context() as lc:
-        return plot_to_image(lambda: robjects.r("plot").rcall(
-            (
-                ("x", robjects.r("chart.Drawdown").rcall(
+    with ro.local_context() as lc:
+        return plot_to_image(
+            lambda: plot_ro(
+                ro.r("chart.Drawdown").rcall(  # type: ignore
                     (
                         ("R", xts_from_df(R)),
                         ("geometric", geometric),
                         ("legend.loc", legend_loc),
                     ),
                     lc,
-                )),
-            ),
-            lc,
-        ))
+                ),
+                lc,
+            )
+        )

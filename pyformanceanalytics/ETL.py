@@ -1,59 +1,74 @@
 """The PerformanceAnalytics ETL function."""
-from typing import Optional, List
+# pylint: disable=too-many-arguments
+from __future__ import annotations
 
 import numpy as np
 import pandas as pd
-from rpy2 import robjects
-from rpy2.robjects import pandas2ri, numpy2ri
-from rpy2.robjects.vectors import FloatVector
+from rpy2 import robjects as ro
 
-from .rimports import ensure_packages_present, PERFORMANCE_ANALYTICS_PACKAGE
+from .ETL_clean import ETLCLean
+from .ETL_method import ETLMethod
+from .ETL_portfolio_method import ETLPortfolioMethod
+from .r_df import as_data_frame_or_float
+from .rimports import PERFORMANCE_ANALYTICS_PACKAGE, ensure_packages_present
 from .xts import xts_from_df
 
 
 def ETL(
-        R: pd.DataFrame,
-        p: float = 0.95,
-        method: Optional[str] = None,
-        clean: Optional[str] = None,
-        portfolio_method: Optional[str] = None,
-        weights: Optional[List[float]] = None,
-        mu: Optional[List[float]] = None,
-        sigma: Optional[np.ndarray] = None,
-        m3: Optional[np.ndarray] = None,
-        m4: Optional[np.ndarray] = None,
-        invert: bool = True,
-        operational: bool = True,
-        SE: bool = False) -> pd.DataFrame:
+    R: pd.DataFrame,
+    p: float = 0.95,
+    method: (str | ETLMethod | None) = None,
+    clean: (str | ETLCLean | None) = None,
+    portfolio_method: (str | ETLPortfolioMethod | None) = None,
+    weights: (list[float] | None) = None,
+    mu: (list[float] | None) = None,
+    sigma: (np.ndarray | None) = None,
+    m3: (np.ndarray | None) = None,
+    m4: (np.ndarray | None) = None,
+    invert: bool = True,
+    operational: bool = True,
+    SE: bool = False,
+) -> pd.DataFrame | float:
     """Calculate ETL."""
     ensure_packages_present([PERFORMANCE_ANALYTICS_PACKAGE])
     if method is None:
-        method = "modified"
+        method = ETLMethod.MODIFIED
     if clean is None:
-        clean = "none"
+        clean = ETLCLean.NONE
     if portfolio_method is None:
-        portfolio_method = "single"
-    with robjects.local_context() as lc:
-        with (robjects.default_converter + numpy2ri.converter + pandas2ri.converter).context():
-            return robjects.conversion.get_conversion().rpy2py(robjects.r("as.data.frame").rcall(
-                (
-                    ("x", robjects.r("ETL").rcall(
+        portfolio_method = ETLPortfolioMethod.SINGLE
+    if isinstance(method, ETLMethod):
+        method = method.value
+    if isinstance(clean, ETLCLean):
+        clean = clean.value
+    if isinstance(portfolio_method, ETLPortfolioMethod):
+        portfolio_method = portfolio_method.value
+    with ro.local_context() as lc:
+        with (
+            ro.default_converter + ro.numpy2ri.converter + ro.pandas2ri.converter  # type: ignore
+        ).context():
+            return as_data_frame_or_float(
+                ro.r("ETL").rcall(  # type: ignore
+                    (
+                        ("R", xts_from_df(R)),
+                        ("p", p),
+                        ("method", method),
+                        ("clean", clean),
                         (
-                            ("R", xts_from_df(R)),
-                            ("p", p),
-                            ("method", method),
-                            ("clean", clean),
-                            ("weights", None if weights is None else FloatVector(weights)),
-                            ("mu", None if mu is None else FloatVector(mu)),
-                            ("sigma", sigma),
-                            ("m3", m3),
-                            ("m4", m4),
-                            ("invert", invert),
-                            ("operational", operational),
-                            ("SE", SE),
+                            "weights",
+                            None
+                            if weights is None
+                            else ro.vectors.FloatVector(weights),
                         ),
-                        lc,
-                    )),
+                        ("mu", None if mu is None else ro.vectors.FloatVector(mu)),
+                        ("sigma", sigma),
+                        ("m3", m3),
+                        ("m4", m4),
+                        ("invert", invert),
+                        ("operational", operational),
+                        ("SE", SE),
+                    ),
+                    lc,
                 ),
                 lc,
-            ))
+            )

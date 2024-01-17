@@ -1,3 +1,4 @@
 """The SharpeRatio module for the pyformance analytics code."""
-from .modified import modified
+# ruff: noqa: F401
 from .annualized import annualized
+from .modified import modified

@@ -1,25 +1,22 @@
 """The PerformanceAnalytics PainIndex function."""
-import pandas as pd
-from rpy2 import robjects
-from rpy2.robjects import pandas2ri
+from __future__ import annotations
 
-from .rimports import ensure_packages_present, PERFORMANCE_ANALYTICS_PACKAGE
+import pandas as pd
+from rpy2 import robjects as ro
+
+from .r_df import as_data_frame_or_float
+from .rimports import PERFORMANCE_ANALYTICS_PACKAGE, ensure_packages_present
 from .xts import xts_from_df
 
 
-def pain_index(R: pd.DataFrame) -> pd.DataFrame:
+def PainIndex(R: pd.DataFrame) -> pd.DataFrame | float:
     """Calculate PainIndex."""
     ensure_packages_present([PERFORMANCE_ANALYTICS_PACKAGE])
-    with robjects.local_context() as lc:
-        with (robjects.default_converter + pandas2ri.converter).context():
-            return robjects.conversion.get_conversion().rpy2py(robjects.r("as.data.frame").rcall(
-                (
-                    ("x", robjects.r("PainIndex").rcall(
-                        (
-                            ("R", xts_from_df(R)),
-                        ),
-                        lc,
-                    )),
-                ),
+    with ro.local_context() as lc:
+        return as_data_frame_or_float(
+            ro.r("PainIndex").rcall(  # type: ignore
+                (("R", xts_from_df(R)),),
                 lc,
-            ))
+            ),
+            lc,
+        )

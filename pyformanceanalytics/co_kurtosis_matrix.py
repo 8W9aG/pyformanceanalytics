@@ -1,19 +1,20 @@
 """The PerformanceAnalytics CoKurtosisMatrix function."""
-import numpy as np
 import pandas as pd
-from rpy2 import robjects
+from rpy2 import robjects as ro
 
-from .rimports import ensure_packages_present, PERFORMANCE_ANALYTICS_PACKAGE
+from .r_df import as_data_frame
+from .rimports import PERFORMANCE_ANALYTICS_PACKAGE, ensure_packages_present
 from .xts import xts_from_df
 
 
-def co_kurtosis_matrix(R: pd.DataFrame) -> np.ndarray:
+def co_kurtosis_matrix(R: pd.DataFrame) -> pd.DataFrame:
     """Calculate CoKurtosisMatrix."""
     ensure_packages_present([PERFORMANCE_ANALYTICS_PACKAGE])
-    with robjects.local_context() as lc:
-        return np.array(robjects.r("CoKurtosisMatrix").rcall(
-            (
-                ("R", xts_from_df(R)),
+    with ro.local_context() as lc:
+        return as_data_frame(
+            ro.r("CoKurtosisMatrix").rcall(  # type: ignore
+                (("R", xts_from_df(R)),),
+                lc,
             ),
             lc,
-        ))
+        )

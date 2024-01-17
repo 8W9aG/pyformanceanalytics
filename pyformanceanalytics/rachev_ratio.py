@@ -1,29 +1,34 @@
 """The PerformanceAnalytics RachevRatio function."""
-import pandas as pd
-from rpy2 import robjects
-from rpy2.robjects import pandas2ri
+from __future__ import annotations
 
-from .rimports import ensure_packages_present, PERFORMANCE_ANALYTICS_PACKAGE
+import pandas as pd
+from rpy2 import robjects as ro
+
+from .r_df import as_data_frame_or_float
+from .rimports import PERFORMANCE_ANALYTICS_PACKAGE, ensure_packages_present
 from .xts import xts_from_df
 
 
-def rachev_ratio(R: pd.DataFrame, alpha: float = 0.1, beta: float = 0.1, rf: float = 0.0, SE: bool = False) -> pd.DataFrame:
+def RachevRatio(
+    R: pd.DataFrame,
+    alpha: float = 0.1,
+    beta: float = 0.1,
+    rf: float = 0.0,
+    SE: bool = False,
+) -> pd.DataFrame | float:
     """Calculate RachevRatio."""
     ensure_packages_present([PERFORMANCE_ANALYTICS_PACKAGE])
-    with robjects.local_context() as lc:
-        with (robjects.default_converter + pandas2ri.converter).context():
-            return robjects.conversion.get_conversion().rpy2py(robjects.r("as.data.frame").rcall(
+    with ro.local_context() as lc:
+        return as_data_frame_or_float(
+            ro.r("RachevRatio").rcall(  # type: ignore
                 (
-                    ("x", robjects.r("RachevRatio").rcall(
-                        (
-                            ("R", xts_from_df(R)),
-                            ("alpha", alpha),
-                            ("beta", beta),
-                            ("rf", rf),
-                            ("SE", SE),
-                        ),
-                        lc,
-                    )),
+                    ("R", xts_from_df(R)),
+                    ("alpha", alpha),
+                    ("beta", beta),
+                    ("rf", rf),
+                    ("SE", SE),
                 ),
                 lc,
-            ))
+            ),
+            lc,
+        )

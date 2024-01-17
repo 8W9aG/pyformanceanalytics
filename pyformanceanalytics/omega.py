@@ -1,42 +1,40 @@
 """The PerformanceAnalytics Omega function."""
-from typing import Optional
+from __future__ import annotations
 
 import pandas as pd
-from rpy2 import robjects
-from rpy2.robjects import pandas2ri
+from rpy2 import robjects as ro
 
-from .rimports import ensure_packages_present, PERFORMANCE_ANALYTICS_PACKAGE
+from .r_df import as_data_frame_or_float
+from .rimports import PERFORMANCE_ANALYTICS_PACKAGE, ensure_packages_present
 from .xts import xts_from_df
 
 
-def omega(
-        R: pd.DataFrame,
-        L: float = 0.0,
-        method: Optional[str] = None,
-        output: Optional[str] = None,
-        Rf: Optional[pd.DataFrame] = None,
-        SE: bool = False) -> pd.DataFrame:
+def Omega(
+    R: pd.DataFrame,
+    L: float = 0.0,
+    method: (str | None) = None,
+    output: (str | None) = None,
+    Rf: (pd.DataFrame | None) = None,
+    SE: bool = False,
+) -> pd.DataFrame | float:
     """Calculate Omega."""
     ensure_packages_present([PERFORMANCE_ANALYTICS_PACKAGE])
     if method is None:
         method = "simple"
     if output is None:
         output = "point"
-    with robjects.local_context() as lc:
-        with (robjects.default_converter + pandas2ri.converter).context():
-            return robjects.conversion.get_conversion().rpy2py(robjects.r("as.data.frame").rcall(
+    with ro.local_context() as lc:
+        return as_data_frame_or_float(
+            ro.r("Omega").rcall(  # type: ignore
                 (
-                    ("x", robjects.r("Omega").rcall(
-                        (
-                            ("R", xts_from_df(R)),
-                            ("L", L),
-                            ("method", method),
-                            ("output", output),
-                            ("Rf", 0 if Rf is None else xts_from_df(Rf)),
-                            ("SE", SE),
-                        ),
-                        lc,
-                    )),
+                    ("R", xts_from_df(R)),
+                    ("L", L),
+                    ("method", method),
+                    ("output", output),
+                    ("Rf", 0 if Rf is None else xts_from_df(Rf)),
+                    ("SE", SE),
                 ),
                 lc,
-            ))
+            ),
+            lc,
+        )

@@ -1,25 +1,19 @@
 """The PerformanceAnalytics sortDrawdowns function."""
 import pandas as pd
-from rpy2 import robjects
-from rpy2.robjects import pandas2ri
+from rpy2 import robjects as ro
 
-from .rimports import ensure_packages_present, PERFORMANCE_ANALYTICS_PACKAGE
-from .xts import xts_from_df
+from .r_df import as_data_frame
+from .rimports import PERFORMANCE_ANALYTICS_PACKAGE, ensure_packages_present
 
 
 def sort_drawdowns(runs: pd.DataFrame) -> pd.DataFrame:
     """Calculate sortDrawdowns."""
     ensure_packages_present([PERFORMANCE_ANALYTICS_PACKAGE])
-    with robjects.local_context() as lc:
-        with (robjects.default_converter + pandas2ri.converter).context():
-            return robjects.conversion.get_conversion().rpy2py(robjects.r("as.data.frame").rcall(
-                (
-                    ("x", robjects.r("sortDrawdowns").rcall(
-                        (
-                            ("runs", runs),
-                        ),
-                        lc,
-                    )),
-                ),
+    with ro.local_context() as lc:
+        return as_data_frame(
+            ro.r("sortDrawdowns").rcall(  # type: ignore
+                (("runs", runs),),
                 lc,
-            ))
+            ),
+            lc,
+        )

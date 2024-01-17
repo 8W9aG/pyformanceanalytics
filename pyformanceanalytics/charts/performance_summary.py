@@ -1,55 +1,61 @@
 """The function for handling performance summaries charts."""
-from typing import List, Optional
+# pylint: disable=too-many-arguments
+from __future__ import annotations
 
 import pandas as pd
-from rpy2 import robjects
-from rpy2.robjects.vectors import StrVector
+from PIL import Image
+from rpy2 import robjects as ro
 
 from ..ggplot_img import ggplot_to_image
-from ..rimports import ensure_packages_present, GGPLOT2_PACKAGE, GRIDEXTRA_PACKAGE, PERFORMANCE_ANALYTICS_PACKAGE
+from ..rimports import (GGPLOT2_PACKAGE, GRIDEXTRA_PACKAGE,
+                        PERFORMANCE_ANALYTICS_PACKAGE, ensure_packages_present)
 from ..xts import xts_from_df
 
 
-def performance_summary(
-        R: pd.DataFrame,
-        Rf: Optional[pd.DataFrame] = None,
-        main: Optional[str] = None,
-        geometric: bool = True,
-        methods: Optional[str] = None,
-        width: int = 0,
-        event_labels: Optional[bool] = None,
-        ylog: bool = False,
-        wealth_index: bool = False,
-        gap: int = 12,
-        begin: Optional[List[str]] = None,
-        legend_loc: Optional[str] = None,
-        p: float = 0.95):
+def PerformanceSummary(
+    R: pd.DataFrame,
+    Rf: (pd.DataFrame | None) = None,
+    main: (str | None) = None,
+    geometric: bool = True,
+    methods: (str | None) = None,
+    width: int = 0,
+    event_labels: (bool | None) = None,
+    ylog: bool = False,
+    wealth_index: bool = False,
+    gap: int = 12,
+    begin: (list[str] | None) = None,
+    legend_loc: (str | None) = None,
+    p: float = 0.95,
+) -> Image.Image:
     """Calculate charts.PerformanceSummary."""
-    ensure_packages_present([GGPLOT2_PACKAGE, GRIDEXTRA_PACKAGE, PERFORMANCE_ANALYTICS_PACKAGE])
+    ensure_packages_present(
+        [GGPLOT2_PACKAGE, GRIDEXTRA_PACKAGE, PERFORMANCE_ANALYTICS_PACKAGE]
+    )
     if methods is None:
         methods = "none"
     if begin is None:
         begin = ["first", "axis"]
     if legend_loc is None:
         legend_loc = "topleft"
-    with robjects.local_context() as lc:
-        plt = robjects.r("charts.PerformanceSummary").rcall(
-            (
-                ("R", xts_from_df(R)),
-                ("Rf", 0 if Rf is None else xts_from_df(Rf)),
-                ("main", main),
-                ("geometric", geometric),
-                ("methods", methods),
-                ("width", width),
-                ("event.labels", event_labels),
-                ("ylog", ylog),
-                ("wealth.index", wealth_index),
-                ("gap", gap),
-                ("begin", StrVector(begin)),
-                ("legend.loc", legend_loc),
-                ("p", p),
-                ("plot.engine", "ggplot2"),
-            ),
-            lc,
+    with ro.local_context() as lc:
+        return ggplot_to_image(
+            ro.r("charts.PerformanceSummary").rcall(  # type: ignore
+                (
+                    ("R", xts_from_df(R)),
+                    ("Rf", 0 if Rf is None else xts_from_df(Rf)),
+                    ("main", main),
+                    ("geometric", geometric),
+                    ("methods", methods),
+                    ("width", width),
+                    ("event.labels", event_labels),
+                    ("ylog", ylog),
+                    ("wealth.index", wealth_index),
+                    ("gap", gap),
+                    ("begin", ro.vectors.StrVector(begin)),
+                    ("legend.loc", legend_loc),
+                    ("p", p),
+                    ("plot.engine", "ggplot2"),
+                ),
+                lc,
+            )
         )
-        return ggplot_to_image(plt)

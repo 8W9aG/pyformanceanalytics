@@ -1,33 +1,40 @@
 """The PerformanceAnalytics RPESE.control function."""
-from typing import Optional
+from __future__ import annotations
 
 import pandas as pd
-from rpy2 import robjects
-from rpy2.robjects import pandas2ri
+from rpy2 import robjects as ro
 
-from ..rimports import ensure_packages_present, PERFORMANCE_ANALYTICS_PACKAGE, PKG_PACKAGE
+from ..r_df import as_data_frame_or_float
+from ..rimports import (PERFORMANCE_ANALYTICS_PACKAGE, PKG_PACKAGE,
+                        ensure_packages_present)
 
 
-def control(estimator: str, se_method: Optional[str] = None, clean_outliers: Optional[bool] = None, fitting_method: Optional[str] = None, freq_include: Optional[str] = None, freq_par: Optional[float] = None, a: Optional[float] = None, b: Optional[float] = None) -> pd.DataFrame:
+def control(
+    estimator: str,
+    se_method: (str | None) = None,
+    clean_outliers: (bool | None) = None,
+    fitting_method: (str | None) = None,
+    freq_include: (str | None) = None,
+    freq_par: (float | None) = None,
+    a: (float | None) = None,
+    b: (float | None) = None,
+) -> pd.DataFrame | float:
     """Calculate RPESE.control."""
     ensure_packages_present([PERFORMANCE_ANALYTICS_PACKAGE, PKG_PACKAGE])
-    with robjects.local_context() as lc:
-        with (robjects.default_converter + pandas2ri.converter).context():
-            return robjects.conversion.get_conversion().rpy2py(robjects.r("as.data.frame").rcall(
+    with ro.local_context() as lc:
+        return as_data_frame_or_float(
+            ro.r("RPESE.control").rcall(  # type: ignore
                 (
-                    ("x", robjects.r("RPESE.control").rcall(
-                        (
-                            ("estimator", estimator),
-                            ("se.method", se_method),
-                            ("cleanOutliers", clean_outliers),
-                            ("fitting.method", fitting_method),
-                            ("freq.include", freq_include),
-                            ("freq.par", freq_par),
-                            ("a", a),
-                            ("b", b),
-                        ),
-                        lc,
-                    )),
+                    ("estimator", estimator),
+                    ("se.method", se_method),
+                    ("cleanOutliers", clean_outliers),
+                    ("fitting.method", fitting_method),
+                    ("freq.include", freq_include),
+                    ("freq.par", freq_par),
+                    ("a", a),
+                    ("b", b),
                 ),
                 lc,
-            ))
+            ),
+            lc,
+        )

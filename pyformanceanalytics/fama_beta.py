@@ -1,26 +1,25 @@
 """The PerformanceAnalytics FamaBeta function."""
-import pandas as pd
-from rpy2 import robjects
-from rpy2.robjects import pandas2ri
+from __future__ import annotations
 
-from .rimports import ensure_packages_present, PERFORMANCE_ANALYTICS_PACKAGE
+import pandas as pd
+from rpy2 import robjects as ro
+
+from .r_df import as_data_frame_or_float
+from .rimports import PERFORMANCE_ANALYTICS_PACKAGE, ensure_packages_present
 from .xts import xts_from_df
 
 
-def fama_beta(Ra: pd.DataFrame, Rb: pd.DataFrame) -> pd.DataFrame:
+def FamaBeta(Ra: pd.DataFrame, Rb: pd.DataFrame) -> pd.DataFrame | float:
     """Calculate FamaBeta."""
     ensure_packages_present([PERFORMANCE_ANALYTICS_PACKAGE])
-    with robjects.local_context() as lc:
-        with (robjects.default_converter + pandas2ri.converter).context():
-            return robjects.conversion.get_conversion().rpy2py(robjects.r("as.data.frame").rcall(
+    with ro.local_context() as lc:
+        return as_data_frame_or_float(
+            ro.r("FamaBeta").rcall(  # type: ignore
                 (
-                    ("x", robjects.r("FamaBeta").rcall(
-                        (
-                            ("Ra", xts_from_df(Ra)),
-                            ("Rb", xts_from_df(Rb)),
-                        ),
-                        lc,
-                    )),
+                    ("Ra", xts_from_df(Ra)),
+                    ("Rb", xts_from_df(Rb)),
                 ),
                 lc,
-            ))
+            ),
+            lc,
+        )

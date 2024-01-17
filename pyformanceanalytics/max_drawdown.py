@@ -1,30 +1,32 @@
 """The PerformanceAnalytics maxDrawdown function."""
-from typing import Optional, List
+from __future__ import annotations
 
 import pandas as pd
-from rpy2 import robjects
-from rpy2.robjects import pandas2ri
+from rpy2 import robjects as ro
 
-from .rimports import ensure_packages_present, PERFORMANCE_ANALYTICS_PACKAGE
+from .r_df import as_data_frame_or_float
+from .rimports import PERFORMANCE_ANALYTICS_PACKAGE, ensure_packages_present
 from .xts import xts_from_df
 
 
-def max_drawdown(R: pd.DataFrame, weights: Optional[List[float]] = None, geometric: bool = True, invert: bool = True) -> pd.DataFrame:
+def maxDrawdown(
+    R: pd.DataFrame,
+    weights: (list[float] | None) = None,
+    geometric: bool = True,
+    invert: bool = True,
+) -> pd.DataFrame | float:
     """Calculate maxDrawdown."""
     ensure_packages_present([PERFORMANCE_ANALYTICS_PACKAGE])
-    with robjects.local_context() as lc:
-        with (robjects.default_converter + pandas2ri.converter).context():
-            return robjects.conversion.get_conversion().rpy2py(robjects.r("as.data.frame").rcall(
+    with ro.local_context() as lc:
+        return as_data_frame_or_float(
+            ro.r("maxDrawdown").rcall(  # type: ignore
                 (
-                    ("x", robjects.r("maxDrawdown").rcall(
-                        (
-                            ("R", xts_from_df(R)),
-                            ("weights", weights),
-                            ("geometric", geometric),
-                            ("invert", invert),
-                        ),
-                        lc,
-                    )),
+                    ("R", xts_from_df(R)),
+                    ("weights", weights),
+                    ("geometric", geometric),
+                    ("invert", invert),
                 ),
                 lc,
-            ))
+            ),
+            lc,
+        )

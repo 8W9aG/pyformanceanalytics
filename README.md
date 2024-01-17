@@ -951,9 +951,9 @@ rachev_ratio(df[["HAM1"]].fillna(0.0))
 ### Return.annualized
 
 ```python
-from pyformanceanalytics.Return import annualized_func
+from pyformanceanalytics.Return import annualized_
 
-annualized_func(df)
+annualized_(df)
 ```
 
 ### Return.annualized.excess

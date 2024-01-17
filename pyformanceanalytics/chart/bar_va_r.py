@@ -1,34 +1,36 @@
 """The Performance Analytics chart.BarVaR function."""
-from typing import Optional, List
+# pylint: disable=too-many-arguments
+from __future__ import annotations
 
 import pandas as pd
-from rpy2 import robjects
-from rpy2.robjects.vectors import StrVector
+from PIL import Image
+from rpy2 import robjects as ro
 
-from ..rimports import ensure_packages_present, PERFORMANCE_ANALYTICS_PACKAGE, GGPLOT2_PACKAGE
+from ..plot_img import plot_ro, plot_to_image
+from ..rimports import (GGPLOT2_PACKAGE, PERFORMANCE_ANALYTICS_PACKAGE,
+                        ensure_packages_present)
 from ..xts import xts_from_df
-from ..plot_img import plot_to_image
-from ..ggplot_img import ggplot_to_image
 
 
-def bar_va_r(
-        R: pd.DataFrame,
-        width: int = 0,
-        gap: int = 12,
-        methods: Optional[List[str]] = None,
-        p: float = 0.95,
-        clean: Optional[List[str]] = None,
-        all: bool = False,
-        show_clean: bool = False,
-        show_horizontal: bool = False,
-        show_symmetric: bool = False,
-        show_endvalue: bool = False,
-        show_greenredbars: bool = False,
-        legend_loc: Optional[str] = None,
-        lwd: int = 2,
-        lty: int = 1,
-        ypad: int = 0,
-        legend_cex: float = 0.8):
+def BarVaR(
+    R: pd.DataFrame,
+    width: int = 0,
+    gap: int = 12,
+    methods: (list[str] | None) = None,
+    p: float = 0.95,
+    clean: (list[str] | None) = None,
+    all_: bool = False,
+    show_clean: bool = False,
+    show_horizontal: bool = False,
+    show_symmetric: bool = False,
+    show_endvalue: bool = False,
+    show_greenredbars: bool = False,
+    legend_loc: (str | None) = None,
+    lwd: int = 2,
+    lty: int = 1,
+    ypad: int = 0,
+    legend_cex: float = 0.8,
+) -> Image.Image:
     """Calculate chart.BarVaR."""
     ensure_packages_present([PERFORMANCE_ANALYTICS_PACKAGE, GGPLOT2_PACKAGE])
     if methods is None:
@@ -37,18 +39,18 @@ def bar_va_r(
         clean = ["none"]
     if legend_loc is None:
         legend_loc = "bottomleft"
-    with robjects.local_context() as lc:
-        return plot_to_image(lambda: robjects.r("plot").rcall(
-            (
-                ("x", robjects.r("chart.BarVaR").rcall(
+    with ro.local_context() as lc:
+        return plot_to_image(
+            lambda: plot_ro(
+                ro.r("chart.BarVaR").rcall(  # type: ignore
                     (
                         ("R", xts_from_df(R)),
                         ("width", width),
                         ("gap", gap),
-                        ("methods", StrVector(methods)),
+                        ("methods", ro.vectors.StrVector(methods)),
                         ("p", p),
-                        ("clean", StrVector(clean)),
-                        ("all", all),
+                        ("clean", ro.vectors.StrVector(clean)),
+                        ("all", all_),
                         ("show.clean", show_clean),
                         ("show.horizontal", show_horizontal),
                         ("show.symmetric", show_symmetric),
@@ -62,7 +64,7 @@ def bar_va_r(
                         ("plot.engine", "default"),
                     ),
                     lc,
-                )),
-            ),
-            lc,
-        ))
+                ),
+                lc,
+            )
+        )

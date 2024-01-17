@@ -1,26 +1,27 @@
 """The Performance Analytics chart.RelativePerformance function."""
-from typing import Optional, List
+from __future__ import annotations
 
 import pandas as pd
-from rpy2 import robjects
-from rpy2.robjects.vectors import StrVector, IntVector
+from PIL import Image
+from rpy2 import robjects as ro
 
-from ..rimports import ensure_packages_present, PERFORMANCE_ANALYTICS_PACKAGE
+from ..plot_img import plot_ro, plot_to_image
+from ..rimports import PERFORMANCE_ANALYTICS_PACKAGE, ensure_packages_present
 from ..xts import xts_from_df
-from ..plot_img import plot_to_image
 
 
-def relative_performance(
-        Ra: pd.DataFrame,
-        Rb: pd.DataFrame,
-        main: Optional[str] = None,
-        xaxis: bool = True,
-        colorset: Optional[List[int]] = None,
-        legend_loc: Optional[str] = None,
-        ylog: bool = False,
-        element_color: Optional[str] = None,
-        lty: int = 1,
-        cex_legend: float = 0.7):
+def RelativePerformance(
+    Ra: pd.DataFrame,
+    Rb: pd.DataFrame,
+    main: (str | None) = None,
+    xaxis: bool = True,
+    colorset: (list[int] | None) = None,
+    legend_loc: (str | None) = None,
+    ylog: bool = False,
+    element_color: (str | None) = None,
+    lty: int = 1,
+    cex_legend: float = 0.7,
+) -> Image.Image:
     """Calculate chart.RelativePerformance."""
     ensure_packages_present([PERFORMANCE_ANALYTICS_PACKAGE])
     if main is None:
@@ -29,16 +30,16 @@ def relative_performance(
         colorset = list(range(1, 12))
     if element_color is None:
         element_color = "darkgrey"
-    with robjects.local_context() as lc:
-        return plot_to_image(lambda: robjects.r("plot").rcall(
-            (
-                ("x", robjects.r("chart.RelativePerformance").rcall(
+    with ro.local_context() as lc:
+        return plot_to_image(
+            lambda: plot_ro(
+                ro.r("chart.RelativePerformance").rcall(  # type: ignore
                     (
                         ("Ra", xts_from_df(Ra)),
                         ("Rb", xts_from_df(Rb)),
                         ("main", main),
                         ("xaxis", xaxis),
-                        ("colorset", IntVector(colorset)),
+                        ("colorset", ro.vectors.IntVector(colorset)),
                         ("legend.loc", legend_loc),
                         ("ylog", ylog),
                         ("element.color", element_color),
@@ -46,7 +47,7 @@ def relative_performance(
                         ("cex.legend", cex_legend),
                     ),
                     lc,
-                )),
-            ),
-            lc,
-        ))
+                ),
+                lc,
+            )
+        )

@@ -1,31 +1,30 @@
 """The PerformanceAnalytics KellyRatio function."""
-from typing import Optional
+from __future__ import annotations
 
 import pandas as pd
-from rpy2 import robjects
-from rpy2.robjects import pandas2ri
+from rpy2 import robjects as ro
 
-from .rimports import ensure_packages_present, PERFORMANCE_ANALYTICS_PACKAGE
+from .r_df import as_data_frame_or_float
+from .rimports import PERFORMANCE_ANALYTICS_PACKAGE, ensure_packages_present
 from .xts import xts_from_df
 
 
-def kelly_ratio(R: pd.DataFrame, Rf: Optional[pd.DataFrame] = None, method: Optional[str] = None) -> pd.DataFrame:
+def KellyRatio(
+    R: pd.DataFrame, Rf: (pd.DataFrame | None) = None, method: (str | None) = None
+) -> pd.DataFrame | float:
     """Calculate KellyRatio."""
     ensure_packages_present([PERFORMANCE_ANALYTICS_PACKAGE])
     if method is None:
         method = "half"
-    with robjects.local_context() as lc:
-        with (robjects.default_converter + pandas2ri.converter).context():
-            return robjects.conversion.get_conversion().rpy2py(robjects.r("as.data.frame").rcall(
+    with ro.local_context() as lc:
+        return as_data_frame_or_float(
+            ro.r("KellyRatio").rcall(  # type: ignore
                 (
-                    ("x", robjects.r("KellyRatio").rcall(
-                        (
-                            ("R", xts_from_df(R)),
-                            ("Rf", 0 if Rf is None else xts_from_df(Rf)),
-                            ("method", method),
-                        ),
-                        lc,
-                    )),
+                    ("R", xts_from_df(R)),
+                    ("Rf", 0 if Rf is None else xts_from_df(Rf)),
+                    ("method", method),
                 ),
                 lc,
-            ))
+            ),
+            lc,
+        )

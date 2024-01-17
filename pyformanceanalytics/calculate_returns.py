@@ -1,30 +1,32 @@
 """The PerformanceAnalytics CalculateReturns function."""
-from typing import Optional
+from __future__ import annotations
 
 import pandas as pd
-from rpy2 import robjects
-from rpy2.robjects import pandas2ri
+from rpy2 import robjects as ro
 
-from .rimports import ensure_packages_present, PERFORMANCE_ANALYTICS_PACKAGE
+from .calculate_return_method import CalculateReturnMethod
+from .r_df import as_data_frame_or_float
+from .rimports import PERFORMANCE_ANALYTICS_PACKAGE, ensure_packages_present
 from .xts import xts_from_df
 
 
-def calculate_returns(prices: pd.DataFrame, method: Optional[str] = None) -> pd.DataFrame:
+def CalculateReturns(
+    prices: pd.DataFrame, method: (str | CalculateReturnMethod | None) = None
+) -> pd.DataFrame | float:
     """Calculate CalculateReturns."""
-    if method is None:
-        method = "discrete"
     ensure_packages_present([PERFORMANCE_ANALYTICS_PACKAGE])
-    with robjects.local_context() as lc:
-        with (robjects.default_converter + pandas2ri.converter).context():
-            return robjects.conversion.get_conversion().rpy2py(robjects.r("as.data.frame").rcall(
+    if method is None:
+        method = CalculateReturnMethod.DISCRETE
+    if isinstance(method, CalculateReturnMethod):
+        method = method.value
+    with ro.local_context() as lc:
+        return as_data_frame_or_float(
+            ro.r("CalculateReturns").rcall(  # type: ignore
                 (
-                    ("x", robjects.r("CalculateReturns").rcall(
-                        (
-                            ("prices", xts_from_df(prices)),
-                            ("method", method),
-                        ),
-                        lc,
-                    )),
+                    ("prices", xts_from_df(prices)),
+                    ("method", method),
                 ),
                 lc,
-            ))
+            ),
+            lc,
+        )

@@ -21,7 +21,7 @@ def AppraisalRatio(
     if backend == Backend.R:
         if isinstance(method, AppraisalRatioMethod):
             method = method.value
-        return RAppraisalRatio(Ra, Rb, method, Rf=Rf)
+        return RAppraisalRatio(Ra, Rb, method, Rf)
     raise NotImplementedError(
         f"Backend {backend.value} not implemented for AppraisalRatio"
     )

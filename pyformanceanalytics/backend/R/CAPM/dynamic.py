@@ -13,7 +13,7 @@ def dynamic(
     Ra: pd.DataFrame,
     Rb: pd.DataFrame,
     Z: pd.DataFrame,
-    Rf: (pd.DataFrame | None) = None,
+    Rf: (pd.DataFrame | float),
     lags: int = 1,
 ) -> pd.DataFrame | float:
     """Calculate dynamic."""
@@ -25,7 +25,7 @@ def dynamic(
                     ("Ra", xts_from_df(Ra)),
                     ("Rb", xts_from_df(Rb)),
                     ("Z", xts_from_df(Z)),
-                    ("Rf", xts_from_df(Rf) if Rf is not None else 0),
+                    ("Rf", xts_from_df(Rf) if isinstance(Rf, pd.DataFrame) else Rf),
                     ("lags", lags),
                 ),
                 lc,

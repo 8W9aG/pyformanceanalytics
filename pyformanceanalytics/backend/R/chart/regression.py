@@ -18,7 +18,7 @@ def Regression(
     family: str,
     plot_width: int,
     plot_height: int,
-    Rf: (pd.DataFrame | None) = None,
+    Rf: (pd.DataFrame | float),
     excess_returns: bool = False,
     reference_grid: bool = True,
     main: (str | None) = None,
@@ -52,7 +52,7 @@ def Regression(
                 (
                     ("Ra", xts_from_df(Ra)),
                     ("Rb", xts_from_df(Rb)),
-                    ("Rf", 0 if Rf is None else xts_from_df(Rf)),
+                    ("Rf", xts_from_df(Rf) if isinstance(Rf, pd.DataFrame) else Rf),
                     ("excess.returns", excess_returns),
                     ("reference.grid", reference_grid),
                     ("main", main),

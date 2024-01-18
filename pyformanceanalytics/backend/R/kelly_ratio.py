@@ -10,7 +10,7 @@ from .xts import xts_from_df
 
 
 def KellyRatio(
-    R: pd.DataFrame, Rf: (pd.DataFrame | None) = None, method: (str | None) = None
+    R: pd.DataFrame, Rf: (pd.DataFrame | float), method: (str | None) = None
 ) -> pd.DataFrame:
     """Calculate KellyRatio."""
     ensure_packages_present([PERFORMANCE_ANALYTICS_PACKAGE])
@@ -21,7 +21,7 @@ def KellyRatio(
             ro.r("KellyRatio").rcall(  # type: ignore
                 (
                     ("R", xts_from_df(R)),
-                    ("Rf", 0 if Rf is None else xts_from_df(Rf)),
+                    ("Rf", xts_from_df(Rf) if isinstance(Rf, pd.DataFrame) else Rf),
                     ("method", method),
                 ),
                 lc,

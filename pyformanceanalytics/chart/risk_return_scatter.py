@@ -12,7 +12,7 @@ from ..backend.R.chart.risk_return_scatter import \
 
 def RiskReturnScatter(
     R: pd.DataFrame,
-    Rf: (pd.DataFrame | None) = None,
+    Rf: (pd.DataFrame | float) = 0.0,
     main: (str | None) = None,
     add_names: bool = True,
     xlab: (str | None) = None,
@@ -41,7 +41,7 @@ def RiskReturnScatter(
             R,
             plot_width,
             plot_height,
-            Rf=Rf,
+            Rf,
             main=main,
             add_names=add_names,
             xlab=xlab,

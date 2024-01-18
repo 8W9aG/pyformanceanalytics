@@ -44,6 +44,8 @@ This is a python package hosted on pypi, so to install simply run the following 
 
 `pip install pyformance-analytics`
 
+Note that upon running this package for the first time, you may notice a slight delay as it downloads the relevant R packages.
+
 ## Usage example :eyes:
 
 To get familiar with the individual functions and charts check out the documents in the [pyformanceanalytics README](pyformanceanalytics/README.md). This library ports over 100 functions, 20 charts and 20 tables.

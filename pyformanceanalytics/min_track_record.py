@@ -11,7 +11,7 @@ from .backend.R.min_track_record import MinTrackRecord as RMinTrackRecord
 def MinTrackRecord(
     refSR: (pd.DataFrame | float),
     R: (pd.DataFrame | None) = None,
-    Rf: (pd.DataFrame | None) = None,
+    Rf: (pd.DataFrame | float) = 0.0,
     p: float = 0.95,
     weights: (pd.DataFrame | None) = None,
     n: (int | None) = None,
@@ -26,8 +26,8 @@ def MinTrackRecord(
     if backend == Backend.R:
         return RMinTrackRecord(
             refSR,
+            Rf,
             R=R,
-            Rf=Rf,
             p=p,
             weights=weights,
             n=n,

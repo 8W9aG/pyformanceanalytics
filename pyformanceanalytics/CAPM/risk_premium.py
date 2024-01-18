@@ -8,11 +8,11 @@ from ..backend.R.CAPM.risk_premium import RiskPremium as RRiskPremium
 
 
 def RiskPremium(
-    Ra: pd.DataFrame, Rf: (pd.DataFrame | None) = None, backend: Backend = Backend.R
+    Ra: pd.DataFrame, Rf: (pd.DataFrame | float) = 0.0, backend: Backend = Backend.R
 ) -> pd.DataFrame:
     """Calculate risk premium."""
     if backend == Backend.R:
-        return RRiskPremium(Ra, Rf=Rf)
+        return RRiskPremium(Ra, Rf)
     raise NotImplementedError(
         f"Backend {backend.value} not implemented for CAPM.RiskPremium"
     )

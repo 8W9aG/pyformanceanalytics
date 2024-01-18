@@ -11,7 +11,7 @@ from .backend.R.appraisal_ratio import AppraisalRatio as RAppraisalRatio
 def AppraisalRatio(
     Ra: pd.DataFrame,
     Rb: pd.DataFrame,
-    Rf: (pd.DataFrame | None) = None,
+    Rf: (pd.DataFrame | float) = 0.0,
     method: (str | AppraisalRatioMethod | None) = None,
     backend: Backend = Backend.R,
 ) -> pd.DataFrame | float:

@@ -11,7 +11,7 @@ from ..xts import xts_from_df
 
 def AnnualizedReturns(
     R: pd.DataFrame,
-    Rf: (pd.DataFrame | None) = None,
+    Rf: (pd.DataFrame | float),
     geometric: bool = True,
     digits: int = 4,
 ) -> pd.DataFrame:
@@ -22,7 +22,7 @@ def AnnualizedReturns(
             ro.r("table.AnnualizedReturns").rcall(  # type: ignore
                 (
                     ("R", xts_from_df(R)),
-                    ("Rf", 0 if Rf is None else xts_from_df(Rf)),
+                    ("Rf", xts_from_df(Rf) if isinstance(Rf, pd.DataFrame) else Rf),
                     ("geometric", geometric),
                     ("digits", digits),
                 ),

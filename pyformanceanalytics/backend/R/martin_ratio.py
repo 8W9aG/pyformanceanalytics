@@ -9,7 +9,7 @@ from .rimports import PERFORMANCE_ANALYTICS_PACKAGE, ensure_packages_present
 from .xts import xts_from_df
 
 
-def MartinRatio(R: pd.DataFrame, Rf: (pd.DataFrame | None) = None) -> pd.DataFrame:
+def MartinRatio(R: pd.DataFrame, Rf: (pd.DataFrame | float)) -> pd.DataFrame:
     """Calculate MartinRatio."""
     ensure_packages_present([PERFORMANCE_ANALYTICS_PACKAGE])
     with ro.local_context() as lc:
@@ -17,7 +17,7 @@ def MartinRatio(R: pd.DataFrame, Rf: (pd.DataFrame | None) = None) -> pd.DataFra
             ro.r("MartinRatio").rcall(  # type: ignore
                 (
                     ("R", xts_from_df(R)),
-                    ("Rf", 0 if Rf is None else xts_from_df(Rf)),
+                    ("Rf", xts_from_df(Rf) if isinstance(Rf, pd.DataFrame) else Rf),
                 ),
                 lc,
             ),

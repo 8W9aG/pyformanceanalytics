@@ -10,7 +10,7 @@ from ...backend.R.CAPM.CML.CML import CML as RCML
 def CML(
     Ra: pd.DataFrame,
     Rb: pd.DataFrame,
-    Rf: (pd.DataFrame | None) = None,
+    Rf: (pd.DataFrame | float) = 0.0,
     backend: Backend = Backend.R,
 ) -> pd.DataFrame | float:
     """Calculate CML."""

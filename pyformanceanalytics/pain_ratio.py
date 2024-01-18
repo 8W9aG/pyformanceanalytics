@@ -8,9 +8,9 @@ from .backend.R.pain_ratio import PainRatio as RPainRatio
 
 
 def PainRatio(
-    R: pd.DataFrame, Rf: (pd.DataFrame | None) = None, backend: Backend = Backend.R
+    R: pd.DataFrame, Rf: (pd.DataFrame | float) = 0.0, backend: Backend = Backend.R
 ) -> pd.DataFrame:
     """Calculate PainRatio."""
     if backend == Backend.R:
-        return RPainRatio(R, Rf=Rf)
+        return RPainRatio(R, Rf)
     raise NotImplementedError(f"Backend {backend.value} not implemented for PainRatio")

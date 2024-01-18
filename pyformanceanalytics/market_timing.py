@@ -11,7 +11,7 @@ from .market_timing_method import MarketTimingMethod
 def MarketTiming(
     Ra: pd.DataFrame,
     Rb: pd.DataFrame,
-    Rf: (pd.DataFrame | None) = None,
+    Rf: (pd.DataFrame | float) = 0.0,
     method: (str | MarketTimingMethod | None) = None,
     backend: Backend = Backend.R,
 ) -> pd.DataFrame:
@@ -21,7 +21,7 @@ def MarketTiming(
     if backend == Backend.R:
         if isinstance(method, MarketTimingMethod):
             method = method.value
-        return RMarketTiming(Ra, Rb, method, Rf=Rf)
+        return RMarketTiming(Ra, Rb, method, Rf)
     raise NotImplementedError(
         f"Backend {backend.value} not implemented for MarketTiming"
     )

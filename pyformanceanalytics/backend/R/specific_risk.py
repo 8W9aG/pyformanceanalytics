@@ -10,7 +10,7 @@ from .xts import xts_from_df
 
 
 def SpecificRisk(
-    Ra: pd.DataFrame, Rb: pd.DataFrame, Rf: (pd.DataFrame | None) = None
+    Ra: pd.DataFrame, Rb: pd.DataFrame, Rf: (pd.DataFrame | float)
 ) -> pd.DataFrame | float:
     """Calculate SpecificRisk."""
     ensure_packages_present([PERFORMANCE_ANALYTICS_PACKAGE])
@@ -20,7 +20,7 @@ def SpecificRisk(
                 (
                     ("Ra", xts_from_df(Ra)),
                     ("Rb", xts_from_df(Rb)),
-                    ("Rf", 0 if Rf is None else xts_from_df(Rf)),
+                    ("Rf", xts_from_df(Rf) if isinstance(Rf, pd.DataFrame) else Rf),
                 ),
                 lc,
             ),

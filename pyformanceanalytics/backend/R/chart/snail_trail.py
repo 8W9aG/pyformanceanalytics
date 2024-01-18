@@ -16,7 +16,7 @@ def SnailTrail(
     add_names: str,
     plot_width: int,
     plot_height: int,
-    Rf: (pd.DataFrame | None) = None,
+    Rf: (pd.DataFrame | float),
     main: (str | None) = None,
     xlab: (str | None) = None,
     ylab: (str | None) = None,
@@ -56,7 +56,7 @@ def SnailTrail(
             lambda: ro.r("chart.SnailTrail").rcall(  # type: ignore
                 (
                     ("R", xts_from_df(R)),
-                    ("Rf", 0 if Rf is None else xts_from_df(Rf)),
+                    ("Rf", xts_from_df(Rf) if isinstance(Rf, pd.DataFrame) else Rf),
                     ("main", main),
                     ("add.names", ro.vectors.StrVector([add_names])),
                     ("xlab", xlab),

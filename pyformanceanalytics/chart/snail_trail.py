@@ -12,7 +12,7 @@ from .snail_trail_add_names import SnailTrailAddNames
 
 def SnailTrail(
     R: pd.DataFrame,
-    Rf: (pd.DataFrame | None) = None,
+    Rf: (pd.DataFrame | float) = 0.0,
     main: (str | None) = None,
     add_names: (str | SnailTrailAddNames | None) = None,
     xlab: (str | None) = None,
@@ -48,7 +48,7 @@ def SnailTrail(
             add_names,
             plot_width,
             plot_height,
-            Rf=Rf,
+            Rf,
             main=main,
             xlab=xlab,
             ylab=ylab,

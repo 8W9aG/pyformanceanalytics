@@ -14,8 +14,8 @@ def RollingPerformance(
     R: pd.DataFrame,
     plot_width: int,
     plot_height: int,
+    Rf: (pd.DataFrame | float),
     width: int = 12,
-    Rf: (pd.DataFrame | None) = None,
     main: (str | None) = None,
     event_labels: (bool | None) = None,
     legend_loc: (str | None) = None,
@@ -28,7 +28,7 @@ def RollingPerformance(
                 (
                     ("R", xts_from_df(R)),
                     ("width", width),
-                    ("Rf", 0 if Rf is None else xts_from_df(Rf)),
+                    ("Rf", xts_from_df(Rf) if isinstance(Rf, pd.DataFrame) else Rf),
                     ("main", main),
                     ("event.labels", event_labels),
                     ("legend.loc", legend_loc),

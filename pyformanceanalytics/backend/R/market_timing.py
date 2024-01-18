@@ -13,7 +13,7 @@ def MarketTiming(
     Ra: pd.DataFrame,
     Rb: pd.DataFrame,
     method: str,
-    Rf: (pd.DataFrame | None) = None,
+    Rf: (pd.DataFrame | float),
 ) -> pd.DataFrame:
     """Calculate MarketTiming."""
     ensure_packages_present([PERFORMANCE_ANALYTICS_PACKAGE])
@@ -23,7 +23,7 @@ def MarketTiming(
                 (
                     ("Ra", xts_from_df(Ra)),
                     ("Rb", xts_from_df(Rb)),
-                    ("Rf", 0 if Rf is None else xts_from_df(Rf)),
+                    ("Rf", xts_from_df(Rf) if isinstance(Rf, pd.DataFrame) else Rf),
                     ("method", method),
                 ),
                 lc,

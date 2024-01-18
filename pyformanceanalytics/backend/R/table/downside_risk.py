@@ -11,8 +11,8 @@ from ..xts import xts_from_df
 
 def DownsideRisk(
     R: pd.DataFrame,
+    Rf: (pd.DataFrame | float),
     ci: float = 0.95,
-    Rf: (pd.DataFrame | None) = None,
     MAR: float = 0.1 / 12.0,
     p: float = 0.95,
     digits: int = 4,
@@ -25,7 +25,7 @@ def DownsideRisk(
                 (
                     ("R", xts_from_df(R)),
                     ("ci", ci),
-                    ("Rf", 0 if Rf is None else xts_from_df(Rf)),
+                    ("Rf", xts_from_df(Rf) if isinstance(Rf, pd.DataFrame) else Rf),
                     ("MAR", MAR),
                     ("p", p),
                     ("digits", digits),

@@ -14,7 +14,7 @@ from .regression_fit import RegressionFit
 def Regression(
     Ra: pd.DataFrame,
     Rb: pd.DataFrame,
-    Rf: (pd.DataFrame | None) = None,
+    Rf: (pd.DataFrame | float) = 0.0,
     excess_returns: bool = False,
     reference_grid: bool = True,
     main: (str | None) = None,
@@ -54,7 +54,7 @@ def Regression(
             family,
             plot_width,
             plot_height,
-            Rf=Rf,
+            Rf,
             excess_returns=excess_returns,
             reference_grid=reference_grid,
             main=main,

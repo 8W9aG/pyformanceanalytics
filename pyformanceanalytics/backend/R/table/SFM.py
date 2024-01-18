@@ -12,7 +12,7 @@ from ..xts import xts_from_df
 def SFM(
     Ra: pd.DataFrame,
     Rb: pd.DataFrame,
-    Rf: (pd.DataFrame | None) = None,
+    Rf: (pd.DataFrame | float),
     digits: int = 4,
 ) -> pd.DataFrame:
     """Calculate table.SFM."""
@@ -23,7 +23,7 @@ def SFM(
                 (
                     ("Ra", xts_from_df(Ra)),
                     ("Rb", xts_from_df(Rb)),
-                    ("Rf", 0 if Rf is None else xts_from_df(Rf)),
+                    ("Rf", xts_from_df(Rf) if isinstance(Rf, pd.DataFrame) else Rf),
                     ("digits", digits),
                 ),
                 lc,

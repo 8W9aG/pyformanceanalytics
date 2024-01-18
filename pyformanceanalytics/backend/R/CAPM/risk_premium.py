@@ -9,7 +9,7 @@ from ..rimports import PERFORMANCE_ANALYTICS_PACKAGE, ensure_packages_present
 from ..xts import xts_from_df
 
 
-def RiskPremium(Ra: pd.DataFrame, Rf: (pd.DataFrame | None) = None) -> pd.DataFrame:
+def RiskPremium(Ra: pd.DataFrame, Rf: (pd.DataFrame | float)) -> pd.DataFrame:
     """Calculate risk premium."""
     ensure_packages_present([PERFORMANCE_ANALYTICS_PACKAGE])
     with ro.local_context() as lc:
@@ -17,7 +17,7 @@ def RiskPremium(Ra: pd.DataFrame, Rf: (pd.DataFrame | None) = None) -> pd.DataFr
             ro.r("CAPM.RiskPremium").rcall(  # type: ignore
                 (
                     ("Ra", xts_from_df(Ra)),
-                    ("Rf", xts_from_df(Rf) if Rf is not None else 0),
+                    ("Rf", xts_from_df(Rf) if isinstance(Rf, pd.DataFrame) else Rf),
                 ),
                 lc,
             ),

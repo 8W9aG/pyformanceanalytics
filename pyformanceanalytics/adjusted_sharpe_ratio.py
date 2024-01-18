@@ -8,7 +8,7 @@ from .backend.R import adjusted_sharpe_ratio
 
 
 def AdjustedSharpeRatio(
-    R: pd.DataFrame, Rf: (pd.DataFrame | None) = None, backend: Backend = Backend.R
+    R: pd.DataFrame, Rf: (pd.DataFrame | float) = 0.0, backend: Backend = Backend.R
 ) -> pd.DataFrame | float:
     """Calculate AdjustedSharpeRatio."""
     if backend == Backend.R:

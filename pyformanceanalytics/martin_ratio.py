@@ -8,11 +8,11 @@ from .backend.R.martin_ratio import MartinRatio as RMartinRatio
 
 
 def MartinRatio(
-    R: pd.DataFrame, Rf: (pd.DataFrame | None) = None, backend: Backend = Backend.R
+    R: pd.DataFrame, Rf: (pd.DataFrame | float) = 0.0, backend: Backend = Backend.R
 ) -> pd.DataFrame:
     """Calculate MartinRatio."""
     if backend == Backend.R:
-        return RMartinRatio(R, Rf=Rf)
+        return RMartinRatio(R, Rf)
     raise NotImplementedError(
         f"Backend {backend.value} not implemented for MartinRatio"
     )

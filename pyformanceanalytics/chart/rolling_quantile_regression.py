@@ -14,7 +14,7 @@ def RollingQuantileRegression(
     Ra: pd.DataFrame,
     Rb: pd.DataFrame,
     width: int = 12,
-    Rf: (pd.DataFrame | None) = None,
+    Rf: (pd.DataFrame | float) = 0.0,
     attribute: (str | RollingRegressionAttribute | None) = None,
     main: (str | None) = None,
     na_pad: bool = True,
@@ -34,8 +34,8 @@ def RollingQuantileRegression(
             attribute,
             plot_width,
             plot_height,
+            Rf,
             width=width,
-            Rf=Rf,
             main=main,
             na_pad=na_pad,
         )

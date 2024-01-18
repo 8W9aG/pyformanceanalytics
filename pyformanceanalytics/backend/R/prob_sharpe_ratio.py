@@ -13,8 +13,8 @@ from .xts import xts_from_df
 
 def ProbSharpeRatio(
     refSR: (pd.DataFrame | float),
+    Rf: (pd.DataFrame | float),
     R: (pd.DataFrame | None) = None,
-    Rf: (pd.DataFrame | None) = None,
     p: float = 0.95,
     weights: (list[float] | None) = None,
     n: (int | None) = None,
@@ -31,7 +31,7 @@ def ProbSharpeRatio(
             ro.r("ProbSharpeRatio").rcall(  # type: ignore
                 (
                     ("R", None if R is None else xts_from_df(R)),
-                    ("Rf", 0 if Rf is None else xts_from_df(Rf)),
+                    ("Rf", xts_from_df(Rf) if isinstance(Rf, pd.DataFrame) else Rf),
                     (
                         "refSR",
                         xts_from_df(refSR)

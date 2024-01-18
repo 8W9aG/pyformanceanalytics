@@ -14,7 +14,7 @@ def Omega(
     L: float = 0.0,
     method: (str | OmegaMethod | None) = None,
     output: (str | OmegaOutput | None) = None,
-    Rf: (pd.DataFrame | None) = None,
+    Rf: (pd.DataFrame | float) = 0.0,
     SE: bool = False,
     backend: Backend = Backend.R,
 ) -> pd.DataFrame:
@@ -28,5 +28,5 @@ def Omega(
             method = method.value
         if isinstance(output, OmegaOutput):
             output = output.value
-        return ROmega(R, method, output, L=L, Rf=Rf, SE=SE)
+        return ROmega(R, method, output, Rf, L=L, SE=SE)
     raise NotImplementedError(f"Backend {backend.value} not implemented for Omega")

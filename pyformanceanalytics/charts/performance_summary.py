@@ -12,7 +12,7 @@ from ..backend.R.charts.performance_summary import \
 
 def PerformanceSummary(
     R: pd.DataFrame,
-    Rf: (pd.DataFrame | None) = None,
+    Rf: (pd.DataFrame | float) = 0.0,
     main: (str | None) = None,
     geometric: bool = True,
     methods: (str | None) = None,
@@ -34,7 +34,7 @@ def PerformanceSummary(
             R,
             plot_width,
             plot_height,
-            Rf=Rf,
+            Rf,
             main=main,
             geometric=geometric,
             methods=methods,

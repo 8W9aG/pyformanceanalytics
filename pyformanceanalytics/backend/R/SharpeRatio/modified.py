@@ -12,7 +12,7 @@ from ..xts import xts_from_df
 def modified(
     R: pd.DataFrame,
     FUN: str,
-    Rf: (pd.DataFrame | None) = None,
+    Rf: (pd.DataFrame | float),
     p: float = 0.95,
     weights: (pd.DataFrame | None) = None,
 ) -> pd.DataFrame:
@@ -23,7 +23,7 @@ def modified(
             ro.r("SharpeRatio.modified").rcall(  # type: ignore
                 (
                     ("R", xts_from_df(R)),
-                    ("Rf", 0 if Rf is None else xts_from_df(Rf)),
+                    ("Rf", xts_from_df(Rf) if isinstance(Rf, pd.DataFrame) else Rf),
                     ("p", p),
                     ("FUN", FUN),
                     ("weights", weights),

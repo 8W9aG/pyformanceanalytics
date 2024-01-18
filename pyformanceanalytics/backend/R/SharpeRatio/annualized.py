@@ -10,7 +10,7 @@ from ..xts import xts_from_df
 
 
 def annualized(
-    R: pd.DataFrame, Rf: (pd.DataFrame | None) = None, geometric: bool = True
+    R: pd.DataFrame, Rf: (pd.DataFrame | float), geometric: bool = True
 ) -> pd.DataFrame:
     """Calculate SharpeRatio.annualized."""
     ensure_packages_present([PERFORMANCE_ANALYTICS_PACKAGE])
@@ -19,7 +19,7 @@ def annualized(
             ro.r("SharpeRatio.annualized").rcall(  # type: ignore
                 (
                     ("R", xts_from_df(R)),
-                    ("Rf", 0 if Rf is None else xts_from_df(Rf)),
+                    ("Rf", xts_from_df(Rf) if isinstance(Rf, pd.DataFrame) else Rf),
                     ("geometric", geometric),
                 ),
                 lc,

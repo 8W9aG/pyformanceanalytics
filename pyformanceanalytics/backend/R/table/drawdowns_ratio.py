@@ -10,7 +10,7 @@ from ..xts import xts_from_df
 
 
 def DrawdownsRatio(
-    R: pd.DataFrame, Rf: (pd.DataFrame | None) = None, digits: int = 4
+    R: pd.DataFrame, Rf: (pd.DataFrame | float), digits: int = 4
 ) -> pd.DataFrame:
     """Calculate table.DrawdownsRatio."""
     ensure_packages_present([PERFORMANCE_ANALYTICS_PACKAGE])
@@ -19,7 +19,7 @@ def DrawdownsRatio(
             ro.r("table.DrawdownsRatio").rcall(  # type: ignore
                 (
                     ("R", xts_from_df(R)),
-                    ("Rf", 0 if Rf is None else xts_from_df(Rf)),
+                    ("Rf", xts_from_df(Rf) if isinstance(Rf, pd.DataFrame) else Rf),
                     ("digits", digits),
                 ),
                 lc,

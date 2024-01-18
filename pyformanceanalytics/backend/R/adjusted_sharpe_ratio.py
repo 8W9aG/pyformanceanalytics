@@ -10,7 +10,7 @@ from .xts import xts_from_df
 
 
 def AdjustedSharpeRatio(
-    R: pd.DataFrame, Rf: (pd.DataFrame | None) = None
+    R: pd.DataFrame, Rf: pd.DataFrame | float
 ) -> pd.DataFrame | float:
     """Calculate AdjustedSharpeRatio."""
     ensure_packages_present([PERFORMANCE_ANALYTICS_PACKAGE])
@@ -19,7 +19,7 @@ def AdjustedSharpeRatio(
             ro.r("AdjustedSharpeRatio").rcall(  # type: ignore
                 (
                     ("R", xts_from_df(R)),
-                    ("Rf", xts_from_df(Rf) if Rf is not None else 0),
+                    ("Rf", xts_from_df(Rf) if isinstance(Rf, pd.DataFrame) else Rf),
                 ),
                 lc,
             ),

@@ -12,7 +12,7 @@ from ..backend.R.charts.rolling_performance import \
 def RollingPerformance(
     R: pd.DataFrame,
     width: int = 12,
-    Rf: (pd.DataFrame | None) = None,
+    Rf: (pd.DataFrame | float) = 0.0,
     main: (str | None) = None,
     event_labels: (bool | None) = None,
     legend_loc: (str | None) = None,
@@ -26,8 +26,8 @@ def RollingPerformance(
             R,
             plot_width,
             plot_height,
+            Rf,
             width=width,
-            Rf=Rf,
             main=main,
             event_labels=event_labels,
             legend_loc=legend_loc,

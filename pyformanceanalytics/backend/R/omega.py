@@ -13,8 +13,8 @@ def Omega(
     R: pd.DataFrame,
     method: str,
     output: str,
+    Rf: (pd.DataFrame | float),
     L: float = 0.0,
-    Rf: (pd.DataFrame | None) = None,
     SE: bool = False,
 ) -> pd.DataFrame:
     """Calculate Omega."""
@@ -27,7 +27,7 @@ def Omega(
                     ("L", L),
                     ("method", method),
                     ("output", output),
-                    ("Rf", 0 if Rf is None else xts_from_df(Rf)),
+                    ("Rf", xts_from_df(Rf) if isinstance(Rf, pd.DataFrame) else Rf),
                     ("SE", SE),
                 ),
                 lc,

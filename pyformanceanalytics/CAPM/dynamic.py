@@ -11,13 +11,13 @@ def dynamic(
     Ra: pd.DataFrame,
     Rb: pd.DataFrame,
     Z: pd.DataFrame,
-    Rf: (pd.DataFrame | None) = None,
+    Rf: (pd.DataFrame | float) = 0.0,
     lags: int = 1,
     backend: Backend = Backend.R,
 ) -> pd.DataFrame | float:
     """Calculate dynamic."""
     if backend == Backend.R:
-        return Rdynamic(Ra, Rb, Z, Rf=Rf, lags=lags)
+        return Rdynamic(Ra, Rb, Z, Rf, lags=lags)
     raise NotImplementedError(
         f"Backend {backend.value} not implemented for CAPM.dynamic"
     )

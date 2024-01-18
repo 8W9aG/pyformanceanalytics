@@ -10,12 +10,12 @@ from .backend.R.selectivity import Selectivity as RSelectivity
 def Selectivity(
     Ra: pd.DataFrame,
     Rb: pd.DataFrame,
-    Rf: (pd.DataFrame | None) = None,
+    Rf: (pd.DataFrame | float) = 0.0,
     backend: Backend = Backend.R,
 ) -> pd.DataFrame | float:
     """Calculate Selectivity."""
     if backend == Backend.R:
-        return RSelectivity(Ra, Rb, Rf=Rf)
+        return RSelectivity(Ra, Rb, Rf)
     raise NotImplementedError(
         f"Backend {backend.value} not implemented for Selectivity"
     )

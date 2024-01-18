@@ -15,7 +15,7 @@ def RiskReturnScatter(
     R: pd.DataFrame,
     plot_width: int,
     plot_height: int,
-    Rf: (pd.DataFrame | None) = None,
+    Rf: (pd.DataFrame | float),
     main: (str | None) = None,
     add_names: bool = True,
     xlab: (str | None) = None,
@@ -54,7 +54,7 @@ def RiskReturnScatter(
             lambda: ro.r("chart.RiskReturnScatter").rcall(  # type: ignore
                 (
                     ("R", xts_from_df(R)),
-                    ("Rf", 0 if Rf is None else xts_from_df(Rf)),
+                    ("Rf", xts_from_df(Rf) if isinstance(Rf, pd.DataFrame) else Rf),
                     ("main", main),
                     ("add.names", add_names),
                     ("xlab", xlab),

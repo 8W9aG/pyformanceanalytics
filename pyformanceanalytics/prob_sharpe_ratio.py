@@ -12,7 +12,7 @@ from .backend.R.prob_sharpe_ratio import ProbSharpeRatio as RProbSharpeRatio
 def ProbSharpeRatio(
     refSR: (pd.DataFrame | float),
     R: (pd.DataFrame | None) = None,
-    Rf: (pd.DataFrame | None) = None,
+    Rf: (pd.DataFrame | float) = 0.0,
     p: float = 0.95,
     weights: (list[float] | None) = None,
     n: (int | None) = None,
@@ -27,8 +27,8 @@ def ProbSharpeRatio(
     if backend == Backend.R:
         return RProbSharpeRatio(
             refSR,
+            Rf,
             R=R,
-            Rf=Rf,
             p=p,
             weights=weights,
             n=n,

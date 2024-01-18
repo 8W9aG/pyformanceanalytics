@@ -17,8 +17,8 @@ def RollingQuantileRegression(
     attribute: str,
     plot_width: int,
     plot_height: int,
+    Rf: (pd.DataFrame | float),
     width: int = 12,
-    Rf: (pd.DataFrame | None) = None,
     main: (str | None) = None,
     na_pad: bool = True,
 ) -> Image.Image:
@@ -32,7 +32,7 @@ def RollingQuantileRegression(
                         ("Ra", xts_from_df(Ra)),
                         ("Rb", xts_from_df(Rb)),
                         ("width", width),
-                        ("Rf", 0 if Rf is None else xts_from_df(Rf)),
+                        ("Rf", xts_from_df(Rf) if isinstance(Rf, pd.DataFrame) else Rf),
                         ("attribute", ro.vectors.StrVector([attribute])),
                         ("main", main),
                         ("na.pad", na_pad),

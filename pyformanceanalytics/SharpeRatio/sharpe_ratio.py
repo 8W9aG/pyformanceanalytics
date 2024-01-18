@@ -10,7 +10,7 @@ from .sharpe_ratio_function import SharpeRatioFunction
 
 def SharpeRatio(
     R: pd.DataFrame,
-    Rf: (pd.DataFrame | None) = None,
+    Rf: (pd.DataFrame | float) = 0.0,
     p: float = 0.95,
     FUN: (str | SharpeRatioFunction | None) = None,
     weights: (pd.DataFrame | None) = None,
@@ -25,7 +25,7 @@ def SharpeRatio(
         if isinstance(FUN, SharpeRatioFunction):
             FUN = FUN.value
         return RSharpeRatio(
-            R, FUN, Rf=Rf, p=p, weights=weights, annualize=annualize, SE=SE
+            R, FUN, Rf, p=p, weights=weights, annualize=annualize, SE=SE
         )
     raise NotImplementedError(
         f"Backend {backend.value} not implemented for SharpeRatio"

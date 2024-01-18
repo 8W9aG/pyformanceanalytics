@@ -10,7 +10,7 @@ from .xts import xts_from_df
 
 
 def TimingRatio(
-    Ra: pd.DataFrame, Rb: pd.DataFrame, Rf: (pd.DataFrame | None) = None
+    Ra: pd.DataFrame, Rb: pd.DataFrame, Rf: (pd.DataFrame | float)
 ) -> pd.DataFrame | float:
     """Calculate TimingRatio."""
     ensure_packages_present([PERFORMANCE_ANALYTICS_PACKAGE])
@@ -20,7 +20,7 @@ def TimingRatio(
                 (
                     ("Ra", xts_from_df(Ra)),
                     ("Rb", xts_from_df(Rb)),
-                    ("Rf", xts_from_df(Rf) if Rf is not None else 0),
+                    ("Rf", xts_from_df(Rf) if isinstance(Rf, pd.DataFrame) else Rf),
                 ),
                 lc,
             ),

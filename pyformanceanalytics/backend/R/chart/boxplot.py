@@ -14,6 +14,8 @@ from ..xts import xts_from_df
 
 def Boxplot(
     R: pd.DataFrame,
+    plot_width: int,
+    plot_height: int,
     names: bool = True,
     as_tufte: bool = True,
     sort_by: (str | None) = None,
@@ -68,5 +70,7 @@ def Boxplot(
                     ("element.color", element_color),
                 ),
                 lc,
-            )
+            ),
+            plot_width,
+            plot_height,
         )

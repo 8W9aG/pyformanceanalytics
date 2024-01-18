@@ -16,12 +16,16 @@ def RollingPerformance(
     main: (str | None) = None,
     event_labels: (bool | None) = None,
     legend_loc: (str | None) = None,
+    plot_width: int = 512,
+    plot_height: int = 512,
     backend: Backend = Backend.R,
 ) -> Image.Image:
     """Calculate charts.RollingPerformance."""
     if backend == Backend.R:
         return RRollingPerformance(
             R,
+            plot_width,
+            plot_height,
             width=width,
             Rf=Rf,
             main=main,

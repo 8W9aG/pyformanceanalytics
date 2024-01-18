@@ -1,4 +1,5 @@
 """The Performance Analytics chart.RelativePerformance function."""
+# pylint: disable=too-many-arguments
 from __future__ import annotations
 
 import pandas as pd
@@ -13,6 +14,8 @@ from ..xts import xts_from_df
 def RelativePerformance(
     Ra: pd.DataFrame,
     Rb: pd.DataFrame,
+    plot_width: int,
+    plot_height: int,
     main: (str | None) = None,
     xaxis: bool = True,
     colorset: (list[int] | None) = None,
@@ -49,5 +52,7 @@ def RelativePerformance(
                     lc,
                 ),
                 lc,
-            )
+            ),
+            plot_width,
+            plot_height,
         )

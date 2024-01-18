@@ -33,6 +33,8 @@ def Regression(
     legend_cex: float = 0.8,
     cex: float = 0.8,
     lwd: int = 2,
+    plot_width: int = 512,
+    plot_height: int = 512,
     backend: Backend = Backend.R,
 ) -> Image.Image:
     """Calculate chart.Regression."""
@@ -50,6 +52,8 @@ def Regression(
             Rb,
             fit,
             family,
+            plot_width,
+            plot_height,
             Rf=Rf,
             excess_returns=excess_returns,
             reference_grid=reference_grid,

@@ -17,11 +17,22 @@ def Events(
     post: int = 12,
     main: (str | None) = None,
     xlab: (str | None) = None,
+    plot_width: int = 512,
+    plot_height: int = 512,
     backend: Backend = Backend.R,
 ) -> Image.Image:
     """Calculate chart.Events."""
     if backend == Backend.R:
-        return REvents(R, dates=dates, prior=prior, post=post, main=main, xlab=xlab)
+        return REvents(
+            R,
+            dates,
+            plot_width,
+            plot_height,
+            prior=prior,
+            post=post,
+            main=main,
+            xlab=xlab,
+        )
     raise NotImplementedError(
         f"Backend {backend.value} not implemented for chart.Events"
     )

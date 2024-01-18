@@ -16,6 +16,8 @@ def BarVaR(
     R: pd.DataFrame,
     methods: list[str],
     clean: str,
+    plot_width: int,
+    plot_height: int,
     width: int = 0,
     gap: int = 12,
     p: float = 0.95,
@@ -62,5 +64,7 @@ def BarVaR(
                     lc,
                 ),
                 lc,
-            )
+            ),
+            plot_width,
+            plot_height,
         )

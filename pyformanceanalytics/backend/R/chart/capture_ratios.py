@@ -14,6 +14,8 @@ from ..xts import xts_from_df
 def CaptureRatios(
     Ra: pd.DataFrame,
     Rb: pd.DataFrame,
+    plot_width: int,
+    plot_height: int,
     main: (str | None) = None,
     add_names: bool = True,
     xlab: (str | None) = None,
@@ -65,5 +67,7 @@ def CaptureRatios(
                     ("benchmark.color", benchmark_color),
                 ),
                 lc,
-            )
+            ),
+            plot_width,
+            plot_height,
         )

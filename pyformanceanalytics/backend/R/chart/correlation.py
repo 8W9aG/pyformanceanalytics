@@ -10,7 +10,13 @@ from ..rimports import PERFORMANCE_ANALYTICS_PACKAGE, ensure_packages_present
 from ..xts import xts_from_df
 
 
-def Correlation(R: pd.DataFrame, method: str, histogram: bool = True) -> Image.Image:
+def Correlation(
+    R: pd.DataFrame,
+    method: str,
+    plot_width: int,
+    plot_height: int,
+    histogram: bool = True,
+) -> Image.Image:
     """Calculate chart.Correlation."""
     ensure_packages_present([PERFORMANCE_ANALYTICS_PACKAGE])
     with ro.local_context() as lc:
@@ -22,5 +28,7 @@ def Correlation(R: pd.DataFrame, method: str, histogram: bool = True) -> Image.I
                     ("method", method),
                 ),
                 lc,
-            )
+            ),
+            plot_width,
+            plot_height,
         )

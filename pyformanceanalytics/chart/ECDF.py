@@ -20,12 +20,16 @@ def ECDF(
     element_color: (str | None) = None,
     xaxis: bool = True,
     yaxis: bool = True,
+    plot_width: int = 512,
+    plot_height: int = 512,
     backend: Backend = Backend.R,
 ) -> Image.Image:
     """Calculate chart.ECDF."""
     if backend == Backend.R:
         return RECDF(
             R,
+            plot_width,
+            plot_height,
             main=main,
             xlab=xlab,
             ylab=ylab,

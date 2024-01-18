@@ -14,6 +14,8 @@ from ..xts import xts_from_df
 
 def PerformanceSummary(
     R: pd.DataFrame,
+    plot_width: int,
+    plot_height: int,
     Rf: (pd.DataFrame | None) = None,
     main: (str | None) = None,
     geometric: bool = True,
@@ -57,5 +59,7 @@ def PerformanceSummary(
                     ("plot.engine", "ggplot2"),
                 ),
                 lc,
-            )
+            ),
+            plot_width,
+            plot_height,
         )

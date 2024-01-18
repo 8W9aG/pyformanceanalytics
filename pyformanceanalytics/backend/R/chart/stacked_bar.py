@@ -13,6 +13,8 @@ from ..xts import xts_from_df
 
 def StackedBar(
     w: pd.DataFrame,
+    plot_width: int,
+    plot_height: int,
     colorset: (int | None) = None,
     space: float = 0.2,
     cex_axis: float = 0.8,
@@ -78,5 +80,7 @@ def StackedBar(
                     ),
                 ),
                 lc,
-            )
+            ),
+            plot_width,
+            plot_height,
         )

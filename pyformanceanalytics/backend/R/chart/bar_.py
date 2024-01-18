@@ -11,7 +11,9 @@ from ..rimports import (GGPLOT2_PACKAGE, PERFORMANCE_ANALYTICS_PACKAGE,
 from ..xts import xts_from_df
 
 
-def Bar(R: pd.DataFrame, legend_loc: (str | None) = None) -> Image.Image:
+def Bar(
+    R: pd.DataFrame, plot_width: int, plot_height: int, legend_loc: (str | None) = None
+) -> Image.Image:
     """Calculate chart.Bar."""
     ensure_packages_present([PERFORMANCE_ANALYTICS_PACKAGE, GGPLOT2_PACKAGE])
     with ro.local_context() as lc:
@@ -23,5 +25,7 @@ def Bar(R: pd.DataFrame, legend_loc: (str | None) = None) -> Image.Image:
                     ("plot.engine", "ggplot2"),
                 ),
                 lc,
-            )
+            ),
+            plot_width,
+            plot_height,
         )

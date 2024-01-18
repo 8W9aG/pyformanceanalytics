@@ -15,6 +15,8 @@ def CumReturns(
     geometric: bool = True,
     legend_loc: (str | None) = None,
     begin: (str | CumReturnsBegin | None) = None,
+    plot_width: int = 512,
+    plot_height: int = 512,
     backend: Backend = Backend.R,
 ) -> Image.Image:
     """Calculate chart.CumReturns."""
@@ -26,6 +28,8 @@ def CumReturns(
         return RCumReturns(
             R,
             begin,
+            plot_width,
+            plot_height,
             wealth_index=wealth_index,
             geometric=geometric,
             legend_loc=legend_loc,

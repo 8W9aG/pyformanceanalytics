@@ -32,6 +32,8 @@ def QQPlot(
     yaxis: bool = True,
     ylim: (float | None) = None,
     distribution_parameter: (str | None) = None,
+    plot_width: int = 512,
+    plot_height: int = 512,
     backend: Backend = Backend.R,
 ) -> Image.Image:
     """Calculate chart.QQPlot."""
@@ -43,6 +45,8 @@ def QQPlot(
         return RQQPlot(
             R,
             line,
+            plot_width,
+            plot_height,
             distributrion=distributrion,
             ylab=ylab,
             xlab=xlab,

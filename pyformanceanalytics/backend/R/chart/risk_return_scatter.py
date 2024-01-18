@@ -13,6 +13,8 @@ from ..xts import xts_from_df
 
 def RiskReturnScatter(
     R: pd.DataFrame,
+    plot_width: int,
+    plot_height: int,
     Rf: (pd.DataFrame | None) = None,
     main: (str | None) = None,
     add_names: bool = True,
@@ -73,5 +75,7 @@ def RiskReturnScatter(
                     ("cex.lab", cex_lab),
                 ),
                 lc,
-            )
+            ),
+            plot_width,
+            plot_height,
         )

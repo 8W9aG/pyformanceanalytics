@@ -18,6 +18,8 @@ def RollingQuantileRegression(
     attribute: (str | RollingRegressionAttribute | None) = None,
     main: (str | None) = None,
     na_pad: bool = True,
+    plot_width: int = 512,
+    plot_height: int = 512,
     backend: Backend = Backend.R,
 ) -> Image.Image:
     """Calculate chart.RollingQuantileRegression."""
@@ -27,7 +29,15 @@ def RollingQuantileRegression(
         if isinstance(attribute, RollingRegressionAttribute):
             attribute = attribute.value
         return RRollingQuantileRegression(
-            Ra, Rb, attribute, width=width, Rf=Rf, main=main, na_pad=na_pad
+            Ra,
+            Rb,
+            attribute,
+            plot_width,
+            plot_height,
+            width=width,
+            Rf=Rf,
+            main=main,
+            na_pad=na_pad,
         )
     raise NotImplementedError(
         f"Backend {backend.value} not implemented for chart.RollingQuantileRegression"

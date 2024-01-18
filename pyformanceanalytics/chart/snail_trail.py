@@ -33,6 +33,8 @@ def SnailTrail(
     cex_text: float = 0.8,
     cex_legend: float = 0.8,
     element_color: (str | None) = None,
+    plot_width: int = 512,
+    plot_height: int = 512,
     backend: Backend = Backend.R,
 ) -> Image.Image:
     """Calculate chart.SnailTrail."""
@@ -44,6 +46,8 @@ def SnailTrail(
         return RSnailTrail(
             R,
             add_names,
+            plot_width,
+            plot_height,
             Rf=Rf,
             main=main,
             xlab=xlab,

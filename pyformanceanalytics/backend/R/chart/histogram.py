@@ -15,6 +15,8 @@ from ..xts import xts_from_df
 def Histogram(
     R: pd.DataFrame,
     methods: list[str],
+    plot_width: int,
+    plot_height: int,
     breaks: (str | None) = None,
     main: (str | None) = None,
     xlab: (str | None) = None,
@@ -101,5 +103,7 @@ def Histogram(
                     ("yaxis", yaxis),
                 ),
                 lc,
-            )
+            ),
+            plot_width,
+            plot_height,
         )

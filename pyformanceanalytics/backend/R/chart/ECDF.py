@@ -1,4 +1,5 @@
 """The Performance Analytics chart.ECDF function."""
+# pylint: disable=too-many-arguments
 from __future__ import annotations
 
 import pandas as pd
@@ -12,6 +13,8 @@ from ..xts import xts_from_df
 
 def ECDF(
     R: pd.DataFrame,
+    plot_width: int,
+    plot_height: int,
     main: (str | None) = None,
     xlab: (str | None) = None,
     ylab: (str | None) = None,
@@ -52,5 +55,7 @@ def ECDF(
                     ("yaxis", yaxis),
                 ),
                 lc,
-            )
+            ),
+            plot_width,
+            plot_height,
         )

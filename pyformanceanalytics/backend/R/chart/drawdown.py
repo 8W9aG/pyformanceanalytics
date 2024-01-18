@@ -11,7 +11,11 @@ from ..xts import xts_from_df
 
 
 def Drawdown(
-    R: pd.DataFrame, geometric: bool = True, legend_loc: (str | None) = None
+    R: pd.DataFrame,
+    plot_width: int,
+    plot_height: int,
+    geometric: bool = True,
+    legend_loc: (str | None) = None,
 ) -> Image.Image:
     """Calculate chart.Drawdown."""
     ensure_packages_present([PERFORMANCE_ANALYTICS_PACKAGE])
@@ -27,5 +31,7 @@ def Drawdown(
                     lc,
                 ),
                 lc,
-            )
+            ),
+            plot_width,
+            plot_height,
         )

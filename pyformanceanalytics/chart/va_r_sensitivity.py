@@ -29,6 +29,8 @@ def VaRSensitivity(
     cex_legend: float = 0.8,
     main: (str | None) = None,
     ylim: (float | None) = None,
+    plot_width: int = 512,
+    plot_height: int = 512,
     backend: Backend = Backend.R,
 ) -> Image.Image:
     """Calculate chart.VaRSensitivity."""
@@ -50,6 +52,8 @@ def VaRSensitivity(
             R,
             [x.value if isinstance(x, VaRSensitivityMethods) else x for x in methods],
             clean,
+            plot_width,
+            plot_height,
             element_color=element_color,
             reference_grid=reference_grid,
             xlab=xlab,

@@ -14,6 +14,8 @@ from ..xts import xts_from_df
 def SnailTrail(
     R: pd.DataFrame,
     add_names: str,
+    plot_width: int,
+    plot_height: int,
     Rf: (pd.DataFrame | None) = None,
     main: (str | None) = None,
     xlab: (str | None) = None,
@@ -77,5 +79,7 @@ def SnailTrail(
                     ("element.color", element_color),
                 ),
                 lc,
-            )
+            ),
+            plot_width,
+            plot_height,
         )

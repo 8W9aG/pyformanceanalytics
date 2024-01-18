@@ -14,6 +14,8 @@ from ..xts import xts_from_df
 def QQPlot(
     R: pd.DataFrame,
     line: str,
+    plot_width: int,
+    plot_height: int,
     distributrion: (str | None) = None,
     ylab: (str | None) = None,
     xlab: (str | None) = None,
@@ -71,5 +73,7 @@ def QQPlot(
                     ("distributionParameter", distribution_parameter),
                 ),
                 lc,
-            )
+            ),
+            plot_width,
+            plot_height,
         )

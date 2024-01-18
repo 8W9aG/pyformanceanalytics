@@ -15,6 +15,8 @@ from ..xts import xts_from_df
 def Events(
     R: pd.DataFrame,
     dates: list[datetime.date],
+    plot_width: int,
+    plot_height: int,
     prior: int = 12,
     post: int = 12,
     main: (str | None) = None,
@@ -42,5 +44,7 @@ def Events(
                     lc,
                 ),
                 lc,
-            )
+            ),
+            plot_width,
+            plot_height,
         )

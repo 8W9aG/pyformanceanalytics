@@ -29,6 +29,8 @@ def BarVaR(
     lty: int = 1,
     ypad: int = 0,
     legend_cex: float = 0.8,
+    plot_width: int = 512,
+    plot_height: int = 512,
     backend: Backend = Backend.R,
 ) -> Image.Image:
     """Calculate chart.BarVaR."""
@@ -52,6 +54,8 @@ def BarVaR(
             R,
             [x.value if isinstance(x, BarVaRMethod) else x for x in methods],
             clean,
+            plot_width,
+            plot_height,
             width=width,
             gap=gap,
             p=p,

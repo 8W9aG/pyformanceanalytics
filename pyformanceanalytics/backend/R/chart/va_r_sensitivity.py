@@ -15,6 +15,8 @@ def VaRSensitivity(
     R: pd.DataFrame,
     methods: list[str],
     clean: str,
+    plot_width: int,
+    plot_height: int,
     element_color: (str | None) = None,
     reference_grid: bool = True,
     xlab: (str | None) = None,
@@ -69,5 +71,7 @@ def VaRSensitivity(
                     ("ylim", ylim),
                 ),
                 lc,
-            )
+            ),
+            plot_width,
+            plot_height,
         )

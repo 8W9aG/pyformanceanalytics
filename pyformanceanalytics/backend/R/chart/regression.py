@@ -16,6 +16,8 @@ def Regression(
     Rb: pd.DataFrame,
     fit: str,
     family: str,
+    plot_width: int,
+    plot_height: int,
     Rf: (pd.DataFrame | None) = None,
     excess_returns: bool = False,
     reference_grid: bool = True,
@@ -71,5 +73,7 @@ def Regression(
                     ("lwd", lwd),
                 ),
                 lc,
-            )
+            ),
+            plot_width,
+            plot_height,
         )

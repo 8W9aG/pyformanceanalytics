@@ -13,6 +13,8 @@ from ..xts import xts_from_df
 def RollingCorrelation(
     Ra: pd.DataFrame,
     Rb: pd.DataFrame,
+    plot_width: int,
+    plot_height: int,
     width: int = 12,
     xaxis: bool = True,
     legend_loc: (str | None) = None,
@@ -37,5 +39,7 @@ def RollingCorrelation(
                     lc,
                 ),
                 lc,
-            )
+            ),
+            plot_width,
+            plot_height,
         )

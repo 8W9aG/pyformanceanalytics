@@ -30,12 +30,16 @@ def StackedBar(
     minor_ticks: bool = True,
     las: int = 0,
     xaxis_labels: (list[str] | None) = None,
+    plot_width: int = 512,
+    plot_height: int = 512,
     backend: Backend = Backend.R,
 ) -> Image.Image:
     """Calculate chart.StackedBar."""
     if backend == Backend.R:
         return RStackedBar(
             w,
+            plot_width,
+            plot_height,
             colorset=colorset,
             space=space,
             cex_axis=cex_axis,

@@ -37,6 +37,8 @@ def Histogram(
     cex_main: int = 1,
     xaxis: bool = True,
     yaxis: bool = True,
+    plot_width: int = 512,
+    plot_height: int = 512,
     backend: Backend = Backend.R,
 ) -> Image.Image:
     """Calculate chart.Histogram."""
@@ -56,6 +58,8 @@ def Histogram(
         return RHistogram(
             R,
             [x.value if isinstance(x, HistogramMethods) else x for x in methods],
+            plot_width,
+            plot_height,
             breaks=breaks,
             main=main,
             xlab=xlab,

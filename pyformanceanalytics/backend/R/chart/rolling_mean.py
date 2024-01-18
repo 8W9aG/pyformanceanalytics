@@ -12,6 +12,8 @@ from ..xts import xts_from_df
 
 def RollingMean(
     R: pd.DataFrame,
+    plot_width: int,
+    plot_height: int,
     width: int = 12,
     xaxis: bool = True,
     ylim: (float | None) = None,
@@ -35,5 +37,7 @@ def RollingMean(
                     lc,
                 ),
                 lc,
-            )
+            ),
+            plot_width,
+            plot_height,
         )

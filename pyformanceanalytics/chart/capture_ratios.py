@@ -27,6 +27,8 @@ def CaptureRatios(
     cex_lab: int = 1,
     element_color: (str | None) = None,
     benchmark_color: (str | None) = None,
+    plot_width: int = 512,
+    plot_height: int = 512,
     backend: Backend = Backend.R,
 ) -> Image.Image:
     """Calculate chart.CaptureRatios."""
@@ -34,6 +36,8 @@ def CaptureRatios(
         return RCaptureRatios(
             Ra,
             Rb,
+            plot_width,
+            plot_height,
             main=main,
             add_names=add_names,
             xlab=xlab,

@@ -21,6 +21,8 @@ def RelativePerformance(
     element_color: (str | None) = None,
     lty: int = 1,
     cex_legend: float = 0.7,
+    plot_width: int = 512,
+    plot_height: int = 512,
     backend: Backend = Backend.R,
 ) -> Image.Image:
     """Calculate chart.RelativePerformance."""
@@ -28,6 +30,8 @@ def RelativePerformance(
         return RRelativePerformance(
             Ra,
             Rb,
+            plot_width,
+            plot_height,
             main=main,
             xaxis=xaxis,
             colorset=colorset,

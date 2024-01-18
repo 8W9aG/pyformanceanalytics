@@ -12,6 +12,8 @@ from ..xts import xts_from_df
 
 def RollingPerformance(
     R: pd.DataFrame,
+    plot_width: int,
+    plot_height: int,
     width: int = 12,
     fun: (str | None) = None,
     ylim: (float | None) = None,
@@ -35,5 +37,7 @@ def RollingPerformance(
                     lc,
                 ),
                 lc,
-            )
+            ),
+            plot_width,
+            plot_height,
         )

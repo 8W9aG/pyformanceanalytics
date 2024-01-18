@@ -13,6 +13,8 @@ from ..xts import xts_from_df
 def CumReturns(
     R: pd.DataFrame,
     begin: str,
+    plot_width: int,
+    plot_height: int,
     wealth_index: bool = False,
     geometric: bool = True,
     legend_loc: (str | None) = None,
@@ -33,5 +35,7 @@ def CumReturns(
                     lc,
                 ),
                 lc,
-            )
+            ),
+            plot_width,
+            plot_height,
         )

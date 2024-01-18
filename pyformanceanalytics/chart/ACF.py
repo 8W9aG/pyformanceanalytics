@@ -13,9 +13,18 @@ def ACF(
     maxlag: (int | None) = None,
     elementcolor: (str | None) = None,
     main: (str | None) = None,
+    plot_width: int = 512,
+    plot_height: int = 512,
     backend: Backend = Backend.R,
 ) -> Image.Image:
     """Calculate chart.ACF."""
     if backend == Backend.R:
-        return RACF(R, maxlag=maxlag, elementcolor=elementcolor, main=main)
+        return RACF(
+            R,
+            plot_width,
+            plot_height,
+            maxlag=maxlag,
+            elementcolor=elementcolor,
+            main=main,
+        )
     raise NotImplementedError(f"Backend {backend.value} not implemented for chart.ACF")

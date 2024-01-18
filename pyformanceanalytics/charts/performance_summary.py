@@ -24,12 +24,16 @@ def PerformanceSummary(
     begin: (list[str] | None) = None,
     legend_loc: (str | None) = None,
     p: float = 0.95,
+    plot_width: int = 512,
+    plot_height: int = 512,
     backend: Backend = Backend.R,
 ) -> Image.Image:
     """Calculate charts.PerformanceSummary."""
     if backend == Backend.R:
         return RPerformanceSummary(
             R,
+            plot_width,
+            plot_height,
             Rf=Rf,
             main=main,
             geometric=geometric,

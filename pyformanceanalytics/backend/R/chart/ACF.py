@@ -12,6 +12,8 @@ from ..xts import xts_from_df
 
 def ACF(
     R: pd.DataFrame,
+    plot_width: int,
+    plot_height: int,
     maxlag: (int | None) = None,
     elementcolor: (str | None) = None,
     main: (str | None) = None,
@@ -30,5 +32,7 @@ def ACF(
                     ("main", main),
                 ),
                 lc,
-            )
+            ),
+            plot_width,
+            plot_height,
         )

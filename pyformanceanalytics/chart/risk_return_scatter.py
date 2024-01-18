@@ -31,12 +31,16 @@ def RiskReturnScatter(
     cex_axis: float = 0.8,
     cex_main: int = 1,
     cex_lab: int = 1,
+    plot_width: int = 512,
+    plot_height: int = 512,
     backend: Backend = Backend.R,
 ) -> Image.Image:
     """Calculate chart.RiskReturnScatter."""
     if backend == Backend.R:
         return RRiskReturnScatter(
             R,
+            plot_width,
+            plot_height,
             Rf=Rf,
             main=main,
             add_names=add_names,

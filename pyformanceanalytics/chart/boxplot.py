@@ -26,6 +26,8 @@ def Boxplot(
     xlab: (str | None) = None,
     main: (str | None) = None,
     element_color: (str | None) = None,
+    plot_width: int = 512,
+    plot_height: int = 512,
     backend: Backend = Backend.R,
 ) -> Image.Image:
     """Calculate chart.Boxplot."""
@@ -34,6 +36,8 @@ def Boxplot(
             sort_by = sort_by.value
         return RBoxplot(
             R,
+            plot_width,
+            plot_height,
             names=names,
             as_tufte=as_tufte,
             sort_by=sort_by,

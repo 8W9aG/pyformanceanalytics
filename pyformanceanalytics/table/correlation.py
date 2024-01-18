@@ -7,7 +7,7 @@ from ..rimports import PERFORMANCE_ANALYTICS_PACKAGE, ensure_packages_present
 from ..xts import xts_from_df
 
 
-def correlation(Ra: pd.DataFrame, Rb: pd.DataFrame) -> pd.DataFrame:
+def Correlation(Ra: pd.DataFrame, Rb: pd.DataFrame) -> pd.DataFrame:
     """Calculate table.Correlation."""
     ensure_packages_present([PERFORMANCE_ANALYTICS_PACKAGE])
     with ro.local_context() as lc:

@@ -7,7 +7,7 @@ from ..rimports import PERFORMANCE_ANALYTICS_PACKAGE, ensure_packages_present
 from ..xts import xts_from_df
 
 
-def downside_risk_ratio(
+def DownsideRiskRatio(
     R: pd.DataFrame, MAR: float = 0.1 / 12.0, digits: int = 4
 ) -> pd.DataFrame:
     """Calculate table.DownsideRiskRatio."""

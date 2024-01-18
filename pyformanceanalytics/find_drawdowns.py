@@ -7,7 +7,7 @@ from .rimports import PERFORMANCE_ANALYTICS_PACKAGE, ensure_packages_present
 from .xts import xts_from_df
 
 
-def find_drawdowns(R: pd.DataFrame, geometric: bool = True) -> pd.DataFrame:
+def findDrawdowns(R: pd.DataFrame, geometric: bool = True) -> pd.DataFrame:
     """Calculate findDrawdowns."""
     ensure_packages_present([PERFORMANCE_ANALYTICS_PACKAGE])
     with ro.local_context() as lc:

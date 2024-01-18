@@ -7,7 +7,7 @@ from ..rimports import PERFORMANCE_ANALYTICS_PACKAGE, ensure_packages_present
 from ..xts import xts_from_df
 
 
-def variability(
+def Variability(
     R: pd.DataFrame, geometric: bool = True, digits: int = 4
 ) -> pd.DataFrame:
     """Calculate table.Variability."""

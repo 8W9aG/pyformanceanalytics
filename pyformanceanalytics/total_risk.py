@@ -9,7 +9,7 @@ from .rimports import PERFORMANCE_ANALYTICS_PACKAGE, ensure_packages_present
 from .xts import xts_from_df
 
 
-def total_risk(
+def TotalRisk(
     Ra: pd.DataFrame, Rb: pd.DataFrame, Rf: (pd.DataFrame | None) = None
 ) -> pd.DataFrame | float:
     """Calculate TotalRisk."""

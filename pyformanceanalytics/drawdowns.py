@@ -7,7 +7,7 @@ from .rimports import PERFORMANCE_ANALYTICS_PACKAGE, ensure_packages_present
 from .xts import xts_from_df
 
 
-def drawdowns(R: pd.DataFrame, geometric: bool = True) -> pd.DataFrame:
+def Drawdowns(R: pd.DataFrame, geometric: bool = True) -> pd.DataFrame:
     """Calculate Drawdowns."""
     ensure_packages_present([PERFORMANCE_ANALYTICS_PACKAGE])
     with ro.local_context() as lc:

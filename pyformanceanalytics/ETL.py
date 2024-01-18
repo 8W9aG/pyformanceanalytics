@@ -9,7 +9,7 @@ from rpy2 import robjects as ro
 from .ETL_clean import ETLCLean
 from .ETL_method import ETLMethod
 from .ETL_portfolio_method import ETLPortfolioMethod
-from .r_df import as_data_frame_or_float
+from .r_df import as_data_frame
 from .rimports import PERFORMANCE_ANALYTICS_PACKAGE, ensure_packages_present
 from .xts import xts_from_df
 
@@ -28,7 +28,7 @@ def ETL(
     invert: bool = True,
     operational: bool = True,
     SE: bool = False,
-) -> pd.DataFrame | float:
+) -> pd.DataFrame:
     """Calculate ETL."""
     ensure_packages_present([PERFORMANCE_ANALYTICS_PACKAGE])
     if method is None:
@@ -47,7 +47,7 @@ def ETL(
         with (
             ro.default_converter + ro.numpy2ri.converter + ro.pandas2ri.converter  # type: ignore
         ).context():
-            return as_data_frame_or_float(
+            return as_data_frame(
                 ro.r("ETL").rcall(  # type: ignore
                     (
                         ("R", xts_from_df(R)),

@@ -5,7 +5,7 @@ from __future__ import annotations
 import pandas as pd
 from rpy2 import robjects as ro
 
-from .r_df import as_data_frame_or_float
+from .r_df import as_data_frame
 from .rimports import PERFORMANCE_ANALYTICS_PACKAGE, ensure_packages_present
 from .var_clean import VaRClean
 from .var_method import VaRMethod
@@ -42,7 +42,7 @@ def VaR(
     if isinstance(portfolio_method, VaRPortfolioMethod):
         portfolio_method = portfolio_method.value
     with ro.local_context() as lc:
-        return as_data_frame_or_float(
+        return as_data_frame(
             ro.r("VaR").rcall(  # type: ignore
                 (
                     ("R", None if R is None else xts_from_df(R)),

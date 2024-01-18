@@ -7,7 +7,7 @@ from ..rimports import PERFORMANCE_ANALYTICS_PACKAGE, ensure_packages_present
 from ..xts import xts_from_df
 
 
-def calendar_returns(
+def CalendarReturns(
     R: pd.DataFrame, digits: int = 1, as_perc: bool = True, geometric: bool = True
 ) -> pd.DataFrame:
     """Calculate table.CalendarReturns."""

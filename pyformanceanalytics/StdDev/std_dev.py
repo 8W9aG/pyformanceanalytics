@@ -4,9 +4,9 @@ from __future__ import annotations
 import pandas as pd
 from rpy2 import robjects as ro
 
-from .r_df import as_data_frame_or_float
-from .rimports import PERFORMANCE_ANALYTICS_PACKAGE, ensure_packages_present
-from .xts import xts_from_df
+from ..r_df import as_data_frame
+from ..rimports import PERFORMANCE_ANALYTICS_PACKAGE, ensure_packages_present
+from ..xts import xts_from_df
 
 
 def StdDev(
@@ -19,7 +19,7 @@ def StdDev(
     use: (str | None) = None,
     method: (str | None) = None,
     SE: bool = False,
-) -> pd.DataFrame | float:
+) -> pd.DataFrame:
     """Calculate StdDev."""
     ensure_packages_present([PERFORMANCE_ANALYTICS_PACKAGE])
     if clean is None:
@@ -31,7 +31,7 @@ def StdDev(
     if method is None:
         method = "pearson"
     with ro.local_context() as lc:
-        return as_data_frame_or_float(
+        return as_data_frame(
             ro.r("StdDev").rcall(  # type: ignore
                 (
                     ("R", xts_from_df(R)),

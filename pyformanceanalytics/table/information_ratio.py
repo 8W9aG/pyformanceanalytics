@@ -7,7 +7,7 @@ from ..rimports import PERFORMANCE_ANALYTICS_PACKAGE, ensure_packages_present
 from ..xts import xts_from_df
 
 
-def information_ratio(
+def InformationRatio(
     R: pd.DataFrame, Rb: pd.DataFrame, digits: int = 4
 ) -> pd.DataFrame:
     """Calculate table.InformationRatio."""

@@ -3,6 +3,7 @@ from __future__ import annotations
 
 import functools
 
+import rpy2.robjects.packages as rpackages
 from rpy2 import robjects as ro
 
 GGPLOT2_PACKAGE = "ggplot2"
@@ -12,28 +13,29 @@ GRDEVICES_PACKAGE = "grDevices"
 UTILS_PACKAGE = "utils"
 QUANTREG_PACKAGE = "quantreg"
 PKG_PACKAGE = "pkg"
+ROB_STAT_TM_PACKAGE = "RobStatTM"
 
 _IMPORTED_PACKAGES: dict[
-    str, (ro.packages.InstalledSTPackage | ro.packages.InstalledPackage)  # type: ignore
+    str, (rpackages.InstalledSTPackage | rpackages.InstalledPackage)  # type: ignore
 ] = {}
 
 
 @functools.cache
-def utils() -> ro.packages.InstalledSTPackage | ro.packages.InstalledPackage:  # type: ignore
+def utils() -> rpackages.InstalledSTPackage | rpackages.InstalledPackage:  # type: ignore
     """Import the utils R package."""
-    return ro.packages.importr("utils")  # type: ignore
+    return rpackages.importr("utils")  # type: ignore
 
 
 def import_package(
     package: str,
-) -> ro.packages.InstalledSTPackage | ro.packages.InstalledPackage:  # type: ignore
+) -> rpackages.InstalledSTPackage | rpackages.InstalledPackage:  # type: ignore
     """Import an R package to the global environment."""
     if package in _IMPORTED_PACKAGES:
         return _IMPORTED_PACKAGES[package]
-    if not ro.packages.isinstalled(package):  # type: ignore
+    if not rpackages.isinstalled(package):  # type: ignore
         utils().chooseCRANmirror(ind=1)
         utils().install_packages(ro.vectors.StrVector([package]))
-    return ro.packages.importr(package)  # type: ignore
+    return rpackages.importr(package)  # type: ignore
 
 
 def ensure_packages_present(packages: list[str]):

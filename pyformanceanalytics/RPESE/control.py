@@ -4,13 +4,13 @@ from __future__ import annotations
 import pandas as pd
 from rpy2 import robjects as ro
 
-from ..r_df import as_data_frame_or_float
-from ..rimports import (PERFORMANCE_ANALYTICS_PACKAGE, PKG_PACKAGE,
-                        ensure_packages_present)
+from ..r_df import as_data_frame
+from ..rimports import PERFORMANCE_ANALYTICS_PACKAGE, ensure_packages_present
+from .control_estimator import ControlEstimator
 
 
 def control(
-    estimator: str,
+    estimator: (str | ControlEstimator),
     se_method: (str | None) = None,
     clean_outliers: (bool | None) = None,
     fitting_method: (str | None) = None,
@@ -18,11 +18,13 @@ def control(
     freq_par: (float | None) = None,
     a: (float | None) = None,
     b: (float | None) = None,
-) -> pd.DataFrame | float:
+) -> pd.DataFrame:
     """Calculate RPESE.control."""
-    ensure_packages_present([PERFORMANCE_ANALYTICS_PACKAGE, PKG_PACKAGE])
+    ensure_packages_present([PERFORMANCE_ANALYTICS_PACKAGE])
+    if isinstance(estimator, ControlEstimator):
+        estimator = estimator.value
     with ro.local_context() as lc:
-        return as_data_frame_or_float(
+        return as_data_frame(
             ro.r("RPESE.control").rcall(  # type: ignore
                 (
                     ("estimator", estimator),

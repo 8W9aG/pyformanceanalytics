@@ -1,6 +1,5 @@
 """The Return module for the pyformance analytics code."""
 # ruff: noqa: F401
-from .annualized_ import annualized_
 from .calculate import calculate
 from .centered import centered
 from .clean import clean

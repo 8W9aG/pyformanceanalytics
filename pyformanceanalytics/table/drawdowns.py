@@ -7,7 +7,7 @@ from ..rimports import PERFORMANCE_ANALYTICS_PACKAGE, ensure_packages_present
 from ..xts import xts_from_df
 
 
-def drawdowns(
+def Drawdowns(
     R: pd.DataFrame, top: int = 5, digits: int = 4, geometric: bool = True
 ) -> pd.DataFrame:
     """Calculate table.Drawdowns."""

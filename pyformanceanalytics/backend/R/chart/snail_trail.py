@@ -13,9 +13,9 @@ from ..xts import xts_from_df
 
 def SnailTrail(
     R: pd.DataFrame,
+    add_names: str,
     Rf: (pd.DataFrame | None) = None,
     main: (str | None) = None,
-    add_names: (list[str] | None) = None,
     xlab: (str | None) = None,
     ylab: (str | None) = None,
     add_sharpe: (list[int] | None) = None,
@@ -39,8 +39,6 @@ def SnailTrail(
     ensure_packages_present([PERFORMANCE_ANALYTICS_PACKAGE])
     if main is None:
         main = "Annualized Return and Risk"
-    if add_names is None:
-        add_names = ["all", "lastonly", "firstandlast", "none"]
     if xlab is None:
         xlab = "Annualized Risk"
     if ylab is None:
@@ -58,7 +56,7 @@ def SnailTrail(
                     ("R", xts_from_df(R)),
                     ("Rf", 0 if Rf is None else xts_from_df(Rf)),
                     ("main", main),
-                    ("add.names", ro.vectors.StrVector(add_names)),
+                    ("add.names", ro.vectors.StrVector([add_names])),
                     ("xlab", xlab),
                     ("ylab", ylab),
                     ("add.sharpe", ro.vectors.IntVector(add_sharpe)),

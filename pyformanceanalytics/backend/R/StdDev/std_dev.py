@@ -11,25 +11,19 @@ from ..xts import xts_from_df
 
 def StdDev(
     R: pd.DataFrame,
-    clean: (str | None) = None,
-    portfolio_method: (str | None) = None,
+    clean: str,
+    portfolio_method: str,
+    method: str,
     weights: (list[float] | None) = None,
     mu: (list[float] | None) = None,
     sigma: (list[float] | None) = None,
     use: (str | None) = None,
-    method: (str | None) = None,
     SE: bool = False,
 ) -> pd.DataFrame:
     """Calculate StdDev."""
     ensure_packages_present([PERFORMANCE_ANALYTICS_PACKAGE])
-    if clean is None:
-        clean = "none"
-    if portfolio_method is None:
-        portfolio_method = "single"
     if use is None:
         use = "everything"
-    if method is None:
-        method = "pearson"
     with ro.local_context() as lc:
         return as_data_frame(
             ro.r("StdDev").rcall(  # type: ignore

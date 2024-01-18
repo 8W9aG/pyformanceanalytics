@@ -11,13 +11,11 @@ from ..xts import xts_from_df
 
 def Arbitrary(
     R: pd.DataFrame,
-    metrics: (list[str] | None) = None,
+    metrics: list[str],
     metrics_names: (list[str] | None) = None,
 ) -> pd.DataFrame:
     """Calculate table.Arbitrary."""
     ensure_packages_present([PERFORMANCE_ANALYTICS_PACKAGE])
-    if metrics is None:
-        metrics = ["mean", "sd"]
     if metrics_names is None:
         metrics_names = ["Average Return", "Standard Deviation"]
     with ro.local_context() as lc:

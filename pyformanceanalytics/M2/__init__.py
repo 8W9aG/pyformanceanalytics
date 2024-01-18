@@ -3,3 +3,4 @@
 from .ewma import ewma
 from .shrink import shrink
 from .struct import struct
+from .struct_type import StructType

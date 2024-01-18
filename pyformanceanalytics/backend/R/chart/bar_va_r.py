@@ -14,11 +14,11 @@ from ..xts import xts_from_df
 
 def BarVaR(
     R: pd.DataFrame,
+    methods: list[str],
+    clean: str,
     width: int = 0,
     gap: int = 12,
-    methods: (list[str] | None) = None,
     p: float = 0.95,
-    clean: (list[str] | None) = None,
     all_: bool = False,
     show_clean: bool = False,
     show_horizontal: bool = False,
@@ -33,10 +33,6 @@ def BarVaR(
 ) -> Image.Image:
     """Calculate chart.BarVaR."""
     ensure_packages_present([PERFORMANCE_ANALYTICS_PACKAGE, GGPLOT2_PACKAGE])
-    if methods is None:
-        methods = ["none"]
-    if clean is None:
-        clean = ["none"]
     if legend_loc is None:
         legend_loc = "bottomleft"
     with ro.local_context() as lc:
@@ -49,7 +45,7 @@ def BarVaR(
                         ("gap", gap),
                         ("methods", ro.vectors.StrVector(methods)),
                         ("p", p),
-                        ("clean", ro.vectors.StrVector(clean)),
+                        ("clean", ro.vectors.StrVector([clean])),
                         ("all", all_),
                         ("show.clean", show_clean),
                         ("show.horizontal", show_horizontal),

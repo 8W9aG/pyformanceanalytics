@@ -7,6 +7,7 @@ from PIL import Image
 from ..backend.backend import Backend
 from ..backend.R.chart.rolling_quantile_regression import \
     RollingQuantileRegression as RRollingQuantileRegression
+from .rolling_regression_attribute import RollingRegressionAttribute
 
 
 def RollingQuantileRegression(
@@ -14,15 +15,19 @@ def RollingQuantileRegression(
     Rb: pd.DataFrame,
     width: int = 12,
     Rf: (pd.DataFrame | None) = None,
-    attribute: (list[str] | None) = None,
+    attribute: (str | RollingRegressionAttribute | None) = None,
     main: (str | None) = None,
     na_pad: bool = True,
     backend: Backend = Backend.R,
 ) -> Image.Image:
     """Calculate chart.RollingQuantileRegression."""
+    if attribute is None:
+        attribute = RollingRegressionAttribute.BETA
     if backend == Backend.R:
+        if isinstance(attribute, RollingRegressionAttribute):
+            attribute = attribute.value
         return RRollingQuantileRegression(
-            Ra, Rb, width=width, Rf=Rf, attribute=attribute, main=main, na_pad=na_pad
+            Ra, Rb, attribute, width=width, Rf=Rf, main=main, na_pad=na_pad
         )
     raise NotImplementedError(
         f"Backend {backend.value} not implemented for chart.RollingQuantileRegression"

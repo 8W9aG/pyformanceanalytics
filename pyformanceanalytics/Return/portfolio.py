@@ -20,16 +20,18 @@ def portfolio(
     backend: Backend = Backend.R,
 ) -> pd.DataFrame:
     """Calculate Return.portfolio."""
+    if rebalance_on is None:
+        rebalance_on = PortfolioRebalanceOn.YEARS
     if backend == Backend.R:
         if isinstance(rebalance_on, PortfolioRebalanceOn):
             rebalance_on = rebalance_on.value
         return Rportfolio(
             R,
+            rebalance_on,
             weights=weights,
             wealth_index=wealth_index,
             contribution=contribution,
             geometric=geometric,
-            rebalance_on=rebalance_on,
             value=value,
             verbose=verbose,
         )

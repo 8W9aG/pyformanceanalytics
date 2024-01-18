@@ -2,6 +2,7 @@
 # ruff: noqa: F401
 from .annualized_returns import AnnualizedReturns
 from .arbitrary import Arbitrary
+from .arbitrary_metrics import ArbitraryMetrics
 from .autocorrelation import Autocorrelation
 from .calendar_returns import CalendarReturns
 from .capture_ratios import CaptureRatios

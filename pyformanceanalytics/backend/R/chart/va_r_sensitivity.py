@@ -1,5 +1,4 @@
 """The Performance Analytics chart.VaRSensitivity function."""
-# pylint: disable=too-complex
 # pylint: disable=too-many-arguments
 from __future__ import annotations
 
@@ -14,8 +13,8 @@ from ..xts import xts_from_df
 
 def VaRSensitivity(
     R: pd.DataFrame,
-    methods: (list[str] | None) = None,
-    clean: (list[str] | None) = None,
+    methods: list[str],
+    clean: str,
     element_color: (str | None) = None,
     reference_grid: bool = True,
     xlab: (str | None) = None,
@@ -32,17 +31,6 @@ def VaRSensitivity(
 ) -> Image.Image:
     """Calculate chart.VaRSensitivity."""
     ensure_packages_present([PERFORMANCE_ANALYTICS_PACKAGE])
-    if methods is None:
-        methods = [
-            "GaussianVaR",
-            "ModifiedVaR",
-            "HistoricalVaR",
-            "GaussianES",
-            "ModifiedES",
-            "HistoricalES",
-        ]
-    if clean is None:
-        clean = ["none", "boudt", "geltner"]
     if element_color is None:
         element_color = "darkgray"
     if xlab is None:
@@ -65,7 +53,7 @@ def VaRSensitivity(
                 (
                     ("R", xts_from_df(R)),
                     ("methods", ro.vectors.StrVector(methods)),
-                    ("clean", ro.vectors.StrVector(clean)),
+                    ("clean", ro.vectors.StrVector([clean])),
                     ("element.color", element_color),
                     ("reference.grid", reference_grid),
                     ("xlab", xlab),

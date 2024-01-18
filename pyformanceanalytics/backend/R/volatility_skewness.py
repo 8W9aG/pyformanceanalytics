@@ -10,12 +10,12 @@ from .xts import xts_from_df
 
 
 def VolatilitySkewness(
-    R: pd.DataFrame, MAR: float = 0.0, stat: (str | None) = None
+    R: pd.DataFrame,
+    stat: str,
+    MAR: float = 0.0,
 ) -> pd.DataFrame | float:
     """Calculate VolatilitySkewness."""
     ensure_packages_present([PERFORMANCE_ANALYTICS_PACKAGE])
-    if stat is None:
-        stat = "volatility"
     with ro.local_context() as lc:
         return as_data_frame_or_float(
             ro.r("VolatilitySkewness").rcall(  # type: ignore

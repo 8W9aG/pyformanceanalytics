@@ -8,12 +8,14 @@ from PIL import Image
 from ..backend.backend import Backend
 from ..backend.R.chart.va_r_sensitivity import \
     VaRSensitivity as RVaRSensitivity
+from .clean import Clean
+from .va_r_sensitivity_methods import VaRSensitivityMethods
 
 
 def VaRSensitivity(
     R: pd.DataFrame,
-    methods: (list[str] | None) = None,
-    clean: (list[str] | None) = None,
+    methods: (list[str | VaRSensitivityMethods] | None) = None,
+    clean: (str | Clean | None) = None,
     element_color: (str | None) = None,
     reference_grid: bool = True,
     xlab: (str | None) = None,
@@ -30,11 +32,24 @@ def VaRSensitivity(
     backend: Backend = Backend.R,
 ) -> Image.Image:
     """Calculate chart.VaRSensitivity."""
+    if methods is None:
+        methods = [
+            VaRSensitivityMethods.GAUSSIANVAR,
+            VaRSensitivityMethods.MODIFIEDVAR,
+            VaRSensitivityMethods.HISTORICALVAR,
+            VaRSensitivityMethods.GAUSSIANES,
+            VaRSensitivityMethods.MODIFIEDES,
+            VaRSensitivityMethods.HISTORICALES,
+        ]
+    if clean is None:
+        clean = Clean.NONE
     if backend == Backend.R:
+        if isinstance(clean, Clean):
+            clean = clean.value
         return RVaRSensitivity(
             R,
-            methods=methods,
-            clean=clean,
+            [x.value if isinstance(x, VaRSensitivityMethods) else x for x in methods],
+            clean,
             element_color=element_color,
             reference_grid=reference_grid,
             xlab=xlab,

@@ -11,17 +11,15 @@ from ..xts import xts_from_df
 
 def SharpeRatio(
     R: pd.DataFrame,
+    FUN: str,
     Rf: (pd.DataFrame | None) = None,
     p: float = 0.95,
-    FUN: (str | None) = None,
     weights: (pd.DataFrame | None) = None,
     annualize: bool = False,
     SE: bool = False,
 ) -> pd.DataFrame:
     """Calculate SharpeRatio."""
     ensure_packages_present([PERFORMANCE_ANALYTICS_PACKAGE])
-    if FUN is None:
-        FUN = "StdDev"
     with ro.local_context() as lc:
         return as_data_frame(
             ro.r("SharpeRatio").rcall(  # type: ignore

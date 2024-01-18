@@ -19,11 +19,13 @@ def SharpeRatio(
     backend: Backend = Backend.R,
 ) -> pd.DataFrame:
     """Calculate SharpeRatio."""
+    if FUN is None:
+        FUN = SharpeRatioFunction.STD_DEV
     if backend == Backend.R:
         if isinstance(FUN, SharpeRatioFunction):
             FUN = FUN.value
         return RSharpeRatio(
-            R, Rf=Rf, p=p, FUN=FUN, weights=weights, annualize=annualize, SE=SE
+            R, FUN, Rf=Rf, p=p, weights=weights, annualize=annualize, SE=SE
         )
     raise NotImplementedError(
         f"Backend {backend.value} not implemented for SharpeRatio"

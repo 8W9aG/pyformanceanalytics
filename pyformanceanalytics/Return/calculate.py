@@ -14,6 +14,8 @@ def calculate(
     backend: Backend = Backend.R,
 ) -> pd.DataFrame:
     """Calculate Return.calculate."""
+    if method is None:
+        method = CalculateMethod.DISCRETE
     if backend == Backend.R:
         if isinstance(method, CalculateMethod):
             method = method.value

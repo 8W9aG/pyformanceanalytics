@@ -11,15 +11,13 @@ from .xts import xts_from_df
 
 def SortinoRatio(
     R: pd.DataFrame,
+    threshold: str,
     MAR: float = 0.0,
     weights: (pd.DataFrame | None) = None,
-    threshold: (str | None) = None,
     SE: bool = False,
 ) -> pd.DataFrame:
     """Calculate SortinoRatio."""
     ensure_packages_present([PERFORMANCE_ANALYTICS_PACKAGE])
-    if threshold is None:
-        threshold = "MAR"
     with ro.local_context() as lc:
         return as_data_frame(
             ro.r("SortinoRatio").rcall(  # type: ignore

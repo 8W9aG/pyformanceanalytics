@@ -10,12 +10,10 @@ from .xts import xts_from_df
 
 
 def UpsidePotentialRatio(
-    R: pd.DataFrame, MAR: float = 0.0, method: (str | None) = None
+    R: pd.DataFrame, method: str, MAR: float = 0.0
 ) -> pd.DataFrame:
     """Calculate UpsidePotentialRatio."""
     ensure_packages_present([PERFORMANCE_ANALYTICS_PACKAGE])
-    if method is None:
-        method = "subset"
     with ro.local_context() as lc:
         return as_data_frame(
             ro.r("UpsidePotentialRatio").rcall(  # type: ignore

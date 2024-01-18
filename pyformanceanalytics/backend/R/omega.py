@@ -11,18 +11,14 @@ from .xts import xts_from_df
 
 def Omega(
     R: pd.DataFrame,
+    method: str,
+    output: str,
     L: float = 0.0,
-    method: (str | None) = None,
-    output: (str | None) = None,
     Rf: (pd.DataFrame | None) = None,
     SE: bool = False,
 ) -> pd.DataFrame:
     """Calculate Omega."""
     ensure_packages_present([PERFORMANCE_ANALYTICS_PACKAGE])
-    if method is None:
-        method = "simple"
-    if output is None:
-        output = "point"
     with ro.local_context() as lc:
         return as_data_frame(
             ro.r("Omega").rcall(  # type: ignore

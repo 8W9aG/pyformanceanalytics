@@ -14,11 +14,11 @@ from ..xts import xts_from_df
 
 def Histogram(
     R: pd.DataFrame,
+    methods: list[str],
     breaks: (str | None) = None,
     main: (str | None) = None,
     xlab: (str | None) = None,
     ylab: (str | None) = None,
-    methods: (list[str] | None) = None,
     show_outliers: bool = True,
     colorset: (list[str] | None) = None,
     border_col: (str | None) = None,
@@ -47,18 +47,6 @@ def Histogram(
         xlab = "Returns"
     if ylab is None:
         ylab = "Frequency"
-    if methods is None:
-        methods = [
-            "none",
-            "add.density",
-            "add.normal",
-            "add.centered",
-            "add.cauchy",
-            "add.sst",
-            "add.rug",
-            "add.risk",
-            "add.qqplot",
-        ]
     if colorset is None:
         colorset = [
             "lightgray",

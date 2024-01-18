@@ -15,6 +15,8 @@ def skewness(
     backend: Backend = Backend.R,
 ) -> pd.DataFrame | float:
     """Calculate skewness."""
+    if method is None:
+        method = SkewnessMethod.MOMENT
     if backend == Backend.R:
         if isinstance(method, SkewnessMethod):
             method = method.value

@@ -12,8 +12,6 @@ from ..xts import xts_from_df
 def calculate(prices: pd.DataFrame, method: (str | None) = None) -> pd.DataFrame:
     """Calculate Return.calculate."""
     ensure_packages_present([PERFORMANCE_ANALYTICS_PACKAGE])
-    if method is None:
-        method = "discrete"
     with ro.local_context() as lc:
         return as_data_frame(
             ro.r("Return.calculate").rcall(  # type: ignore

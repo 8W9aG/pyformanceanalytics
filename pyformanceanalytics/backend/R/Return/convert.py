@@ -11,14 +11,12 @@ from ..xts import xts_from_df
 
 def convert(
     R: pd.DataFrame,
-    destination_type: (str | None) = None,
+    destination_type: str,
     seed_value: (float | None) = None,
     initial: bool = True,
 ) -> pd.DataFrame | float:
     """Calculate Return.convert."""
     ensure_packages_present([PERFORMANCE_ANALYTICS_PACKAGE])
-    if destination_type is None:
-        destination_type = "discrete"
     with ro.local_context() as lc:
         return as_data_frame_or_float(
             ro.r("Return.convert").rcall(  # type: ignore

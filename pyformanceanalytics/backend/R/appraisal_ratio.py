@@ -12,13 +12,11 @@ from .xts import xts_from_df
 def AppraisalRatio(
     Ra: pd.DataFrame,
     Rb: pd.DataFrame,
+    method: str,
     Rf: (pd.DataFrame | None) = None,
-    method: (str | None) = None,
 ) -> pd.DataFrame | float:
     """Calculate AdjustedSharpeRatio."""
     ensure_packages_present([PERFORMANCE_ANALYTICS_PACKAGE])
-    if method is None:
-        method = "appraisal"
     with ro.local_context() as lc:
         return as_data_frame_or_float(
             ro.r("AppraisalRatio").rcall(  # type: ignore

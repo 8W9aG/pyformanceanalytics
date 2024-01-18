@@ -1,4 +1,4 @@
-"""An enumeration for the skewness methods."""
+"""An enumeration for the kurtosis methods."""
 from enum import Enum
 
 

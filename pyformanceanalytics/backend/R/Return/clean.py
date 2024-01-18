@@ -9,13 +9,9 @@ from ..rimports import PERFORMANCE_ANALYTICS_PACKAGE, ensure_packages_present
 from ..xts import xts_from_df
 
 
-def clean(
-    R: pd.DataFrame, method: (str | None) = None, alpha: float = 0.01
-) -> pd.DataFrame | float:
+def clean(R: pd.DataFrame, method: str, alpha: float = 0.01) -> pd.DataFrame | float:
     """Calculate Return.clean."""
     ensure_packages_present([PERFORMANCE_ANALYTICS_PACKAGE])
-    if method is None:
-        method = "none"
     with ro.local_context() as lc:
         return as_data_frame_or_float(
             ro.r("Return.clean").rcall(  # type: ignore

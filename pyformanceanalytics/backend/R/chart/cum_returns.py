@@ -12,15 +12,13 @@ from ..xts import xts_from_df
 
 def CumReturns(
     R: pd.DataFrame,
+    begin: str,
     wealth_index: bool = False,
     geometric: bool = True,
     legend_loc: (str | None) = None,
-    begin: (list[str] | None) = None,
 ) -> Image.Image:
     """Calculate chart.CumReturns."""
     ensure_packages_present([PERFORMANCE_ANALYTICS_PACKAGE])
-    if begin is None:
-        begin = ["first", "axis"]
     with ro.local_context() as lc:
         return plot_to_image(
             lambda: plot_ro(
@@ -30,7 +28,7 @@ def CumReturns(
                         ("wealth.index", wealth_index),
                         ("geometric", geometric),
                         ("legend.loc", legend_loc),
-                        ("begin", ro.vectors.StrVector(begin)),
+                        ("begin", ro.vectors.StrVector([begin])),
                     ),
                     lc,
                 ),

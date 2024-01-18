@@ -14,10 +14,12 @@ def CalculateReturns(
     backend: Backend = Backend.R,
 ) -> pd.DataFrame | float:
     """Calculate CalculateReturns."""
+    if method is None:
+        method = CalculateReturnMethod.DISCRETE
     if backend == Backend.R:
         if isinstance(method, CalculateReturnMethod):
             method = method.value
-        return RCalculateReturns(prices, method=method)
+        return RCalculateReturns(prices, method)
     raise NotImplementedError(
         f"Backend {backend.value} not implemented for CalculateReturns"
     )

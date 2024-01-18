@@ -29,6 +29,12 @@ def ETL(
     backend: Backend = Backend.R,
 ) -> pd.DataFrame:
     """Calculate ETL."""
+    if method is None:
+        method = ETLMethod.MODIFIED
+    if clean is None:
+        clean = ETLCLean.NONE
+    if portfolio_method is None:
+        portfolio_method = ETLPortfolioMethod.SINGLE
     if backend == Backend.R:
         if isinstance(method, ETLMethod):
             method = method.value
@@ -38,10 +44,9 @@ def ETL(
             portfolio_method = portfolio_method.value
         return RETL(
             R,
+            method,
+            clean,
             p=p,
-            method=method,
-            clean=clean,
-            portfolio_method=portfolio_method,
             weights=weights,
             mu=mu,
             sigma=sigma,

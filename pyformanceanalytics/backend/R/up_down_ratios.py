@@ -12,15 +12,11 @@ from .xts import xts_from_df
 def UpDownRatios(
     Ra: pd.DataFrame,
     Rb: pd.DataFrame,
-    method: (str | None) = None,
-    side: (str | None) = None,
+    method: str,
+    side: str,
 ) -> pd.DataFrame:
     """Calculate UpDownRatios."""
     ensure_packages_present([PERFORMANCE_ANALYTICS_PACKAGE])
-    if method is None:
-        method = "Capture"
-    if side is None:
-        side = "Up"
     with ro.local_context() as lc:
         return as_data_frame(
             ro.r("UpDownRatios").rcall(  # type: ignore

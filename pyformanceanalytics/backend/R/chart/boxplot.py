@@ -16,7 +16,7 @@ def Boxplot(
     R: pd.DataFrame,
     names: bool = True,
     as_tufte: bool = True,
-    sort_by: (list[(str | None)] | None) = None,
+    sort_by: (str | None) = None,
     colorset: (str | None) = None,
     symbol_color: (str | None) = None,
     mean_symbol: int = 1,
@@ -31,8 +31,6 @@ def Boxplot(
 ) -> Image.Image:
     """Calculate chart.Boxplot."""
     ensure_packages_present([PERFORMANCE_ANALYTICS_PACKAGE, GGPLOT2_PACKAGE])
-    if sort_by is None:
-        sort_by = [None, "mean", "median", "variance"]
     if colorset is None:
         colorset = "black"
     if symbol_color is None:
@@ -53,7 +51,7 @@ def Boxplot(
                     ("names", names),
                     ("as.Tufte", as_tufte),
                     ("plot.engine", "ggplot2"),
-                    ("sort.by", ro.vectors.StrVector(sort_by)),
+                    ("sort.by", sort_by),
                     ("colorset", colorset),
                     ("symbol.color", symbol_color),
                     ("mean.symbol", mean_symbol),

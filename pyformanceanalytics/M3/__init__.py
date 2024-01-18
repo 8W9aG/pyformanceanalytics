@@ -5,3 +5,4 @@ from .MCA import MCA
 from .MM import MM
 from .shrink import shrink
 from .struct import struct
+from .struct_type import StructType

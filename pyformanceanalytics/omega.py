@@ -5,18 +5,28 @@ import pandas as pd
 
 from .backend.backend import Backend
 from .backend.R.omega import Omega as ROmega
+from .omega_method import OmegaMethod
+from .omega_output import OmegaOutput
 
 
 def Omega(
     R: pd.DataFrame,
     L: float = 0.0,
-    method: (str | None) = None,
-    output: (str | None) = None,
+    method: (str | OmegaMethod | None) = None,
+    output: (str | OmegaOutput | None) = None,
     Rf: (pd.DataFrame | None) = None,
     SE: bool = False,
     backend: Backend = Backend.R,
 ) -> pd.DataFrame:
     """Calculate Omega."""
+    if method is None:
+        method = OmegaMethod.SIMPLE
+    if output is None:
+        output = OmegaOutput.POINT
     if backend == Backend.R:
-        return ROmega(R, L=L, method=method, output=output, Rf=Rf, SE=SE)
+        if isinstance(method, OmegaMethod):
+            method = method.value
+        if isinstance(output, OmegaOutput):
+            output = output.value
+        return ROmega(R, method, output, L=L, Rf=Rf, SE=SE)
     raise NotImplementedError(f"Backend {backend.value} not implemented for Omega")

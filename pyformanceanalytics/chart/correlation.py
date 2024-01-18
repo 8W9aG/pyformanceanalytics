@@ -6,17 +6,22 @@ from PIL import Image
 
 from ..backend.backend import Backend
 from ..backend.R.chart.correlation import Correlation as RCorrelation
+from .correlation_method import CorrelationMethod
 
 
 def Correlation(
     R: pd.DataFrame,
     histogram: bool = True,
-    method: (list[str] | None) = None,
+    method: (str | CorrelationMethod | None) = None,
     backend: Backend = Backend.R,
 ) -> Image.Image:
     """Calculate chart.Correlation."""
+    if method is None:
+        method = CorrelationMethod.PEARSON
     if backend == Backend.R:
-        return RCorrelation(R, histogram=histogram, method=method)
+        if isinstance(method, CorrelationMethod):
+            method = method.value
+        return RCorrelation(R, method, histogram=histogram)
     raise NotImplementedError(
         f"Backend {backend.value} not implemented for chart.Correlation"
     )

@@ -7,13 +7,14 @@ from PIL import Image
 
 from ..backend.backend import Backend
 from ..backend.R.chart.snail_trail import SnailTrail as RSnailTrail
+from .snail_trail_add_names import SnailTrailAddNames
 
 
 def SnailTrail(
     R: pd.DataFrame,
     Rf: (pd.DataFrame | None) = None,
     main: (str | None) = None,
-    add_names: (list[str] | None) = None,
+    add_names: (str | SnailTrailAddNames | None) = None,
     xlab: (str | None) = None,
     ylab: (str | None) = None,
     add_sharpe: (list[int] | None) = None,
@@ -35,12 +36,16 @@ def SnailTrail(
     backend: Backend = Backend.R,
 ) -> Image.Image:
     """Calculate chart.SnailTrail."""
+    if add_names is None:
+        add_names = SnailTrailAddNames.ALL
     if backend == Backend.R:
+        if isinstance(add_names, SnailTrailAddNames):
+            add_names = add_names.value
         return RSnailTrail(
             R,
+            add_names,
             Rf=Rf,
             main=main,
-            add_names=add_names,
             xlab=xlab,
             ylab=ylab,
             add_sharpe=add_sharpe,

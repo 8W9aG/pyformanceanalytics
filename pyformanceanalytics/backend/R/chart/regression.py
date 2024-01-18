@@ -14,6 +14,8 @@ from ..xts import xts_from_df
 def Regression(
     Ra: pd.DataFrame,
     Rb: pd.DataFrame,
+    fit: str,
+    family: str,
     Rf: (pd.DataFrame | None) = None,
     excess_returns: bool = False,
     reference_grid: bool = True,
@@ -25,10 +27,8 @@ def Regression(
     element_color: (str | None) = None,
     legend_loc: (str | None) = None,
     ylog: bool = False,
-    fit: (list[str] | None) = None,
     span: float = 2.0 / 3.0,
     degree: int = 1,
-    family: (list[str] | None) = None,
     evaluation: int = 50,
     legend_cex: float = 0.8,
     cex: float = 0.8,
@@ -44,10 +44,6 @@ def Regression(
         symbolset = list(range(1, 12))
     if element_color is None:
         element_color = "darkgrey"
-    if fit is None:
-        fit = ["loess", "linear", "conditional"]
-    if family is None:
-        family = ["symmetric", "gaussian"]
     with ro.local_context() as lc:
         return plot_to_image(
             lambda: ro.r("chart.Regression").rcall(  # type: ignore
@@ -65,10 +61,10 @@ def Regression(
                     ("element.color", element_color),
                     ("legend.loc", legend_loc),
                     ("ylog", ylog),
-                    ("fit", ro.vectors.StrVector(fit)),
+                    ("fit", ro.vectors.StrVector([fit])),
                     ("span", span),
                     ("degree", degree),
-                    ("family", ro.vectors.StrVector(family)),
+                    ("family", ro.vectors.StrVector([family])),
                     ("evaluation", evaluation),
                     ("legend.cex", legend_cex),
                     ("cex", cex),

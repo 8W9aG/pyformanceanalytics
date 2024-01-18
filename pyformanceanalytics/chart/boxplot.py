@@ -7,13 +7,14 @@ from PIL import Image
 
 from ..backend.backend import Backend
 from ..backend.R.chart.boxplot import Boxplot as RBoxplot
+from .boxplot_sort_by import BoxplotSortBy
 
 
 def Boxplot(
     R: pd.DataFrame,
     names: bool = True,
     as_tufte: bool = True,
-    sort_by: (list[(str | None)] | None) = None,
+    sort_by: (str | BoxplotSortBy | None) = None,
     colorset: (str | None) = None,
     symbol_color: (str | None) = None,
     mean_symbol: int = 1,
@@ -29,6 +30,8 @@ def Boxplot(
 ) -> Image.Image:
     """Calculate chart.Boxplot."""
     if backend == Backend.R:
+        if isinstance(sort_by, BoxplotSortBy):
+            sort_by = sort_by.value
         return RBoxplot(
             R,
             names=names,

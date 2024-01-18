@@ -7,6 +7,8 @@ from PIL import Image
 
 from ..backend.backend import Backend
 from ..backend.R.chart.regression import Regression as RRegression
+from .regression_family import RegressionFamily
+from .regression_fit import RegressionFit
 
 
 def Regression(
@@ -23,10 +25,10 @@ def Regression(
     element_color: (str | None) = None,
     legend_loc: (str | None) = None,
     ylog: bool = False,
-    fit: (list[str] | None) = None,
+    fit: (str | RegressionFit | None) = None,
     span: float = 2.0 / 3.0,
     degree: int = 1,
-    family: (list[str] | None) = None,
+    family: (str | RegressionFamily | None) = None,
     evaluation: int = 50,
     legend_cex: float = 0.8,
     cex: float = 0.8,
@@ -34,10 +36,20 @@ def Regression(
     backend: Backend = Backend.R,
 ) -> Image.Image:
     """Calculate chart.Regression."""
+    if fit is None:
+        fit = RegressionFit.LOESS
+    if family is None:
+        family = RegressionFamily.SYMMETRIC
     if backend == Backend.R:
+        if isinstance(fit, RegressionFit):
+            fit = fit.value
+        if isinstance(family, RegressionFamily):
+            family = family.value
         return RRegression(
             Ra,
             Rb,
+            fit,
+            family,
             Rf=Rf,
             excess_returns=excess_returns,
             reference_grid=reference_grid,
@@ -49,10 +61,8 @@ def Regression(
             element_color=element_color,
             legend_loc=legend_loc,
             ylog=ylog,
-            fit=fit,
             span=span,
             degree=degree,
-            family=family,
             evaluation=evaluation,
             legend_cex=legend_cex,
             cex=cex,

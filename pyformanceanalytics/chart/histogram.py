@@ -8,6 +8,7 @@ from PIL import Image
 
 from ..backend.backend import Backend
 from ..backend.R.chart.histogram import Histogram as RHistogram
+from .histogram_methods import HistogramMethods
 
 
 def Histogram(
@@ -16,7 +17,7 @@ def Histogram(
     main: (str | None) = None,
     xlab: (str | None) = None,
     ylab: (str | None) = None,
-    methods: (list[str] | None) = None,
+    methods: (list[str | HistogramMethods] | None) = None,
     show_outliers: bool = True,
     colorset: (list[str] | None) = None,
     border_col: (str | None) = None,
@@ -39,14 +40,26 @@ def Histogram(
     backend: Backend = Backend.R,
 ) -> Image.Image:
     """Calculate chart.Histogram."""
+    if methods is None:
+        methods = [
+            HistogramMethods.NONE,
+            HistogramMethods.ADD_DENSITY,
+            HistogramMethods.ADD_NORMAL,
+            HistogramMethods.ADD_CENTERED,
+            HistogramMethods.ADD_CAUCHY,
+            HistogramMethods.ADD_SST,
+            HistogramMethods.ADD_RUG,
+            HistogramMethods.ADD_RISK,
+            HistogramMethods.ADD_QQPLOT,
+        ]
     if backend == Backend.R:
         return RHistogram(
             R,
+            [x.value if isinstance(x, HistogramMethods) else x for x in methods],
             breaks=breaks,
             main=main,
             xlab=xlab,
             ylab=ylab,
-            methods=methods,
             show_outliers=show_outliers,
             colorset=colorset,
             border_col=border_col,

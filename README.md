@@ -4,18 +4,18 @@
     <img alt="PyPi" src="https://img.shields.io/pypi/v/pyformance-analytics">
 </a>
 
-A python wrapper around the [PerformanceAnalytics R package](https://github.com/braverock/PerformanceAnalytics).
+A python wrapper around the Econometrics [PerformanceAnalytics R package](https://github.com/braverock/PerformanceAnalytics).
 
 ## Dependencies :globe_with_meridians:
 
-Python:
+Python 3.11.6:
 
-- [rpy2](https://rpy2.github.io/)
-- [pandas](https://pandas.pydata.org/)
-- [Pillow](https://pillow.readthedocs.io/en/stable/reference/Image.html)
-- numpy
+- [rpy2 3.5.15](https://rpy2.github.io/)
+- [pandas 2.1.4](https://pandas.pydata.org/)
+- [Pillow 10.2.0](https://pillow.readthedocs.io/en/stable/reference/Image.html)
+- [numpy 1.26.3](https://numpy.org/)
 
-R:
+R 4.3.2:
 
 - [PerformanceAnalytics](https://github.com/braverock/PerformanceAnalytics)
 - [ggplot2](https://ggplot2.tidyverse.org/)

@@ -7,15 +7,17 @@ from PIL import Image
 
 from ..backend.backend import Backend
 from ..backend.R.chart.bar_va_r import BarVaR as RBarVaR
+from .bar_va_r_methods import BarVaRMethod
+from .clean import Clean
 
 
 def BarVaR(
     R: pd.DataFrame,
     width: int = 0,
     gap: int = 12,
-    methods: (list[str] | None) = None,
+    methods: (list[str | BarVaRMethod] | None) = None,
     p: float = 0.95,
-    clean: (list[str] | None) = None,
+    clean: (str | Clean | None) = None,
     all_: bool = False,
     show_clean: bool = False,
     show_horizontal: bool = False,
@@ -30,14 +32,29 @@ def BarVaR(
     backend: Backend = Backend.R,
 ) -> Image.Image:
     """Calculate chart.BarVaR."""
+    if methods is None:
+        methods = [
+            BarVaRMethod.NONE,
+            BarVaRMethod.MODIFIEDVAR,
+            BarVaRMethod.GAUSSIANVAR,
+            BarVaRMethod.HISTORICALVAR,
+            BarVaRMethod.STDDEV,
+            BarVaRMethod.MODIFIEDES,
+            BarVaRMethod.GAUSSIANES,
+            BarVaRMethod.HISTORICALES,
+        ]
+    if clean is None:
+        clean = Clean.NONE
     if backend == Backend.R:
+        if isinstance(clean, Clean):
+            clean = clean.value
         return RBarVaR(
             R,
+            [x.value if isinstance(x, BarVaRMethod) else x for x in methods],
+            clean,
             width=width,
             gap=gap,
-            methods=methods,
             p=p,
-            clean=clean,
             all_=all_,
             show_clean=show_clean,
             show_horizontal=show_horizontal,

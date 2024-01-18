@@ -13,10 +13,9 @@ from .xts import xts_from_df
 
 def ETL(
     R: pd.DataFrame,
+    method: str,
+    clean: str,
     p: float = 0.95,
-    method: (str | None) = None,
-    clean: (str | None) = None,
-    portfolio_method: (str | None) = None,
     weights: (list[float] | None) = None,
     mu: (list[float] | None) = None,
     sigma: (np.ndarray | None) = None,
@@ -28,12 +27,6 @@ def ETL(
 ) -> pd.DataFrame:
     """Calculate ETL."""
     ensure_packages_present([PERFORMANCE_ANALYTICS_PACKAGE])
-    if method is None:
-        method = "modified"
-    if clean is None:
-        clean = "none"
-    if portfolio_method is None:
-        portfolio_method = "single"
     with ro.local_context() as lc:
         with (
             ro.default_converter + ro.numpy2ri.converter + ro.pandas2ri.converter  # type: ignore

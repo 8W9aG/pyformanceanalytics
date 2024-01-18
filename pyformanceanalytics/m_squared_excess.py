@@ -5,18 +5,23 @@ import pandas as pd
 
 from .backend.backend import Backend
 from .backend.R.m_squared_excess import MSquaredExcess as RMSquaredExcess
+from .m_squared_excess_method import MSquaredExcessMethod
 
 
 def MSquaredExcess(
     Ra: pd.DataFrame,
     Rb: pd.DataFrame,
     Rf: (pd.DataFrame | None) = None,
-    method: (str | None) = None,
+    method: (str | MSquaredExcessMethod | None) = None,
     backend: Backend = Backend.R,
 ) -> pd.DataFrame:
     """Calculate MSquaredExcess."""
+    if method is None:
+        method = MSquaredExcessMethod.GEOMETRIC
     if backend == Backend.R:
-        return RMSquaredExcess(Ra, Rb, Rf=Rf, method=method)
+        if isinstance(method, MSquaredExcessMethod):
+            method = method.value
+        return RMSquaredExcess(Ra, Rb, method, Rf=Rf)
     raise NotImplementedError(
         f"Backend {backend.value} not implemented for MSquaredExcess"
     )

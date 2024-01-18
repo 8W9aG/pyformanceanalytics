@@ -11,18 +11,16 @@ from ..xts import xts_from_df
 
 def portfolio(
     R: pd.DataFrame,
+    rebalance_on: str,
     weights: (pd.DataFrame | None) = None,
     wealth_index: bool = False,
     contribution: bool = False,
     geometric: bool = True,
-    rebalance_on: (str | None) = None,
     value: int = 1,
     verbose: bool = False,
 ) -> pd.DataFrame:
     """Calculate Return.portfolio."""
     ensure_packages_present([PERFORMANCE_ANALYTICS_PACKAGE])
-    if rebalance_on is None:
-        rebalance_on = "years"
     with ro.local_context() as lc:
         return as_data_frame(
             ro.r("Return.portfolio").rcall(  # type: ignore

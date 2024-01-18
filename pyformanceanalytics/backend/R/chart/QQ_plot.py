@@ -13,6 +13,7 @@ from ..xts import xts_from_df
 
 def QQPlot(
     R: pd.DataFrame,
+    line: str,
     distributrion: (str | None) = None,
     ylab: (str | None) = None,
     xlab: (str | None) = None,
@@ -23,7 +24,6 @@ def QQPlot(
     lwd: int = 2,
     pch: int = 1,
     cex: int = 1,
-    line: (list[str] | None) = None,
     element_color: (str | None) = None,
     cex_axis: float = 0.8,
     cex_legend: float = 0.8,
@@ -42,8 +42,6 @@ def QQPlot(
         xlab = f"{distributrion} Quantiles"
     if col is None:
         col = [1, 4]
-    if line is None:
-        line = ["quartiles", "robust", "none"]
     if element_color is None:
         element_color = "darkgray"
     with ro.local_context() as lc:
@@ -61,7 +59,7 @@ def QQPlot(
                     ("lwd", lwd),
                     ("pch", pch),
                     ("cex", cex),
-                    ("line", ro.vectors.StrVector(line)),
+                    ("line", ro.vectors.StrVector([line])),
                     ("element.color", element_color),
                     ("cex.axis", cex_axis),
                     ("cex.legend", cex_legend),

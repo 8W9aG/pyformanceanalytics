@@ -11,13 +11,11 @@ from .xts import xts_from_df
 
 def kurtosis(
     x: pd.DataFrame,
+    method: str,
     na_rm: bool = False,
-    method: (str | None) = None,
 ) -> pd.DataFrame | float:
     """Calculate kurtosis."""
     ensure_packages_present([PERFORMANCE_ANALYTICS_PACKAGE])
-    if method is None:
-        method = "moment"
     with ro.local_context() as lc:
         return as_data_frame_or_float(
             ro.r("kurtosis").rcall(  # type: ignore

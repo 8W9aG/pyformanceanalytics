@@ -12,14 +12,12 @@ from ..xts import xts_from_df
 
 def struct(
     R: pd.DataFrame,
-    struct_type: (str | None) = None,
+    struct_type: str,
     f: (pd.DataFrame | None) = None,
     as_mat: bool = True,
 ) -> np.ndarray:
     """Calculate M4.struct."""
     ensure_packages_present([PERFORMANCE_ANALYTICS_PACKAGE])
-    if struct_type is None:
-        struct_type = "Indep"
     with ro.local_context() as lc:
         with (ro.default_converter + numpy2ri.converter).context():
             return np.array(

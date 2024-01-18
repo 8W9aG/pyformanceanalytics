@@ -7,6 +7,7 @@ from PIL import Image
 
 from ..backend.backend import Backend
 from ..backend.R.chart.QQ_plot import QQPlot as RQQPlot
+from .qq_plot_line import QQPlotLine
 
 
 def QQPlot(
@@ -21,7 +22,7 @@ def QQPlot(
     lwd: int = 2,
     pch: int = 1,
     cex: int = 1,
-    line: (list[str] | None) = None,
+    line: (str | QQPlotLine | None) = None,
     element_color: (str | None) = None,
     cex_axis: float = 0.8,
     cex_legend: float = 0.8,
@@ -34,9 +35,14 @@ def QQPlot(
     backend: Backend = Backend.R,
 ) -> Image.Image:
     """Calculate chart.QQPlot."""
+    if line is None:
+        line = QQPlotLine.QUARTILES
     if backend == Backend.R:
+        if isinstance(line, QQPlotLine):
+            line = line.value
         return RQQPlot(
             R,
+            line,
             distributrion=distributrion,
             ylab=ylab,
             xlab=xlab,
@@ -47,7 +53,6 @@ def QQPlot(
             lwd=lwd,
             pch=pch,
             cex=cex,
-            line=line,
             element_color=element_color,
             cex_axis=cex_axis,
             cex_legend=cex_legend,

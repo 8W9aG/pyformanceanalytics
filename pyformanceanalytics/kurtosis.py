@@ -15,8 +15,10 @@ def kurtosis(
     backend: Backend = Backend.R,
 ) -> pd.DataFrame | float:
     """Calculate kurtosis."""
+    if method is None:
+        method = KurtosisMethod.MOMENT
     if backend == Backend.R:
         if isinstance(method, KurtosisMethod):
             method = method.value
-        return Rkurtosis(x, na_rm=na_rm, method=method)
+        return Rkurtosis(x, method, na_rm=na_rm)
     raise NotImplementedError(f"Backend {backend.value} not implemented for kurtosis")

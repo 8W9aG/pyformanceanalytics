@@ -17,10 +17,12 @@ def modified(
     backend: Backend = Backend.R,
 ) -> pd.DataFrame:
     """Calculate SharpeRatio.modified."""
+    if FUN is None:
+        FUN = ModifiedFunction.STD_DEV
     if backend == Backend.R:
         if isinstance(FUN, ModifiedFunction):
             FUN = FUN.value
-        return Rmodified(R, Rf=Rf, p=p, FUN=FUN, weights=weights)
+        return Rmodified(R, FUN, Rf=Rf, p=p, weights=weights)
     raise NotImplementedError(
         f"Backend {backend.value} not implemented for SharpeRatio.modified"
     )

@@ -12,12 +12,16 @@ PERFORMANCE_ANALYTICS_PACKAGE = "PerformanceAnalytics"
 GRDEVICES_PACKAGE = "grDevices"
 UTILS_PACKAGE = "utils"
 QUANTREG_PACKAGE = "quantreg"
-PKG_PACKAGE = "pkg"
 ROB_STAT_TM_PACKAGE = "RobStatTM"
 
 _IMPORTED_PACKAGES: dict[
     str, (rpackages.InstalledSTPackage | rpackages.InstalledPackage)  # type: ignore
 ] = {}
+_VERSIONED_PACKAGES = {
+    GGPLOT2_PACKAGE: "https://cran.r-project.org/src/contrib/ggplot2_3.4.4.tar.gz",
+    GRIDEXTRA_PACKAGE: "https://cran.r-project.org/src/contrib/gridExtra_2.3.tar.gz",
+    PERFORMANCE_ANALYTICS_PACKAGE: "https://cran.r-project.org/src/contrib/PerformanceAnalytics_2.0.4.tar.gz",
+}
 
 
 @functools.cache
@@ -34,7 +38,9 @@ def import_package(
         return _IMPORTED_PACKAGES[package]
     if not rpackages.isinstalled(package):  # type: ignore
         utils().chooseCRANmirror(ind=1)
-        utils().install_packages(ro.vectors.StrVector([package]))
+        utils().install_packages(
+            ro.vectors.StrVector([_VERSIONED_PACKAGES.get(package, package)])
+        )
     return rpackages.importr(package)  # type: ignore
 
 

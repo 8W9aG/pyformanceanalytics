@@ -42,7 +42,7 @@ The functions and modules are designed to be as close to the PerformanceAnalytic
 
 This is a python package hosted on pypi, so to install simply run the following command:
 
-`pip install pyformance-analytics`
+`pip install pyformanceanalytics`
 
 Note that upon running this package for the first time, you may notice a slight delay as it downloads the relevant R packages.
 

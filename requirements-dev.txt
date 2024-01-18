@@ -10,3 +10,4 @@ types-Pillow==10.2.0.20240111
 types-openpyxl==3.1.0.20240106
 pytest==7.4.4
 pytest-drop-dup-tests==0.3.0
+twine==4.0.2

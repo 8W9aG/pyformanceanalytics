@@ -1,7 +1,7 @@
 # pyformanceanalytics
 
-<a href="https://pypi.org/project/pyformance-analytics/">
-    <img alt="PyPi" src="https://img.shields.io/pypi/v/pyformance-analytics">
+<a href="https://pypi.org/project/pyformanceanalytics/">
+    <img alt="PyPi" src="https://img.shields.io/pypi/v/pyformanceanalytics">
 </a>
 
 A python wrapper around the Econometrics [PerformanceAnalytics R package](https://github.com/braverock/PerformanceAnalytics).

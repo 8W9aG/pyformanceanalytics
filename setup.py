@@ -23,7 +23,7 @@ def install_requires() -> typing.List[str]:
 
 setup(
     name='pyformanceanalytics',
-    version='0.0.1',
+    version='0.0.2',
     description='A python wrapper around the PerformanceAnalytics R code.',
     long_description=long_description,
     long_description_content_type='text/markdown',
@@ -32,7 +32,7 @@ setup(
         'Programming Language :: Python :: 3',
     ],
     keywords='r performanceanalytics',
-    url='https://github.com/8W9aG/scrapy-bigquery',
+    url='https://github.com/8W9aG/pyformanceanalytics',
     author='Will Sackfield',
     author_email='will.sackfield@gmail.com',
     license='GPL2',

@@ -23,7 +23,7 @@ def install_requires() -> typing.List[str]:
 
 setup(
     name='pyformanceanalytics',
-    version='0.0.2',
+    version='0.0.3',
     description='A python wrapper around the PerformanceAnalytics R code.',
     long_description=long_description,
     long_description_content_type='text/markdown',

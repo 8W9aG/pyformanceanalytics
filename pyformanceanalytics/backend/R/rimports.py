@@ -20,7 +20,6 @@ _IMPORTED_PACKAGES: dict[
 _VERSIONED_PACKAGES = {
     GGPLOT2_PACKAGE: "https://cran.r-project.org/src/contrib/ggplot2_3.4.4.tar.gz",
     GRIDEXTRA_PACKAGE: "https://cran.r-project.org/src/contrib/gridExtra_2.3.tar.gz",
-    PERFORMANCE_ANALYTICS_PACKAGE: "https://cran.r-project.org/src/contrib/PerformanceAnalytics_2.0.4.tar.gz",
 }
 
 

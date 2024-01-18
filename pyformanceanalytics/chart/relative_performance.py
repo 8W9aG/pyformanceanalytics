@@ -1,13 +1,13 @@
 """The Performance Analytics chart.RelativePerformance function."""
+# pylint: disable=too-many-arguments
 from __future__ import annotations
 
 import pandas as pd
 from PIL import Image
-from rpy2 import robjects as ro
 
-from ..plot_img import plot_ro, plot_to_image
-from ..rimports import PERFORMANCE_ANALYTICS_PACKAGE, ensure_packages_present
-from ..xts import xts_from_df
+from ..backend.backend import Backend
+from ..backend.R.chart.relative_performance import \
+    RelativePerformance as RRelativePerformance
 
 
 def RelativePerformance(
@@ -21,33 +21,22 @@ def RelativePerformance(
     element_color: (str | None) = None,
     lty: int = 1,
     cex_legend: float = 0.7,
+    backend: Backend = Backend.R,
 ) -> Image.Image:
     """Calculate chart.RelativePerformance."""
-    ensure_packages_present([PERFORMANCE_ANALYTICS_PACKAGE])
-    if main is None:
-        main = "Relative Performance"
-    if colorset is None:
-        colorset = list(range(1, 12))
-    if element_color is None:
-        element_color = "darkgrey"
-    with ro.local_context() as lc:
-        return plot_to_image(
-            lambda: plot_ro(
-                ro.r("chart.RelativePerformance").rcall(  # type: ignore
-                    (
-                        ("Ra", xts_from_df(Ra)),
-                        ("Rb", xts_from_df(Rb)),
-                        ("main", main),
-                        ("xaxis", xaxis),
-                        ("colorset", ro.vectors.IntVector(colorset)),
-                        ("legend.loc", legend_loc),
-                        ("ylog", ylog),
-                        ("element.color", element_color),
-                        ("lty", lty),
-                        ("cex.legend", cex_legend),
-                    ),
-                    lc,
-                ),
-                lc,
-            )
+    if backend == Backend.R:
+        return RRelativePerformance(
+            Ra,
+            Rb,
+            main=main,
+            xaxis=xaxis,
+            colorset=colorset,
+            legend_loc=legend_loc,
+            ylog=ylog,
+            element_color=element_color,
+            lty=lty,
+            cex_legend=cex_legend,
         )
+    raise NotImplementedError(
+        f"Backend {backend.value} not implemented for chart.RelativePerformance"
+    )

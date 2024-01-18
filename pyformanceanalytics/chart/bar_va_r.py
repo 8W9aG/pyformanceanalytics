@@ -4,12 +4,9 @@ from __future__ import annotations
 
 import pandas as pd
 from PIL import Image
-from rpy2 import robjects as ro
 
-from ..plot_img import plot_ro, plot_to_image
-from ..rimports import (GGPLOT2_PACKAGE, PERFORMANCE_ANALYTICS_PACKAGE,
-                        ensure_packages_present)
-from ..xts import xts_from_df
+from ..backend.backend import Backend
+from ..backend.R.chart.bar_va_r import BarVaR as RBarVaR
 
 
 def BarVaR(
@@ -30,41 +27,29 @@ def BarVaR(
     lty: int = 1,
     ypad: int = 0,
     legend_cex: float = 0.8,
+    backend: Backend = Backend.R,
 ) -> Image.Image:
     """Calculate chart.BarVaR."""
-    ensure_packages_present([PERFORMANCE_ANALYTICS_PACKAGE, GGPLOT2_PACKAGE])
-    if methods is None:
-        methods = ["none"]
-    if clean is None:
-        clean = ["none"]
-    if legend_loc is None:
-        legend_loc = "bottomleft"
-    with ro.local_context() as lc:
-        return plot_to_image(
-            lambda: plot_ro(
-                ro.r("chart.BarVaR").rcall(  # type: ignore
-                    (
-                        ("R", xts_from_df(R)),
-                        ("width", width),
-                        ("gap", gap),
-                        ("methods", ro.vectors.StrVector(methods)),
-                        ("p", p),
-                        ("clean", ro.vectors.StrVector(clean)),
-                        ("all", all_),
-                        ("show.clean", show_clean),
-                        ("show.horizontal", show_horizontal),
-                        ("show.symmetric", show_symmetric),
-                        ("show.endvalue", show_endvalue),
-                        ("show.greenredbars", show_greenredbars),
-                        ("legend.loc", legend_loc),
-                        ("lwd", lwd),
-                        ("lty", lty),
-                        ("ypad", ypad),
-                        ("legend.cex", legend_cex),
-                        ("plot.engine", "default"),
-                    ),
-                    lc,
-                ),
-                lc,
-            )
+    if backend == Backend.R:
+        return RBarVaR(
+            R,
+            width=width,
+            gap=gap,
+            methods=methods,
+            p=p,
+            clean=clean,
+            all_=all_,
+            show_clean=show_clean,
+            show_horizontal=show_horizontal,
+            show_symmetric=show_symmetric,
+            show_endvalue=show_endvalue,
+            show_greenredbars=show_greenredbars,
+            legend_loc=legend_loc,
+            lwd=lwd,
+            lty=lty,
+            ypad=ypad,
+            legend_cex=legend_cex,
         )
+    raise NotImplementedError(
+        f"Backend {backend.value} not implemented for chart.BarVaR"
+    )

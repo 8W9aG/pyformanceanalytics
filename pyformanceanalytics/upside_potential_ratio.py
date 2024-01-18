@@ -2,29 +2,21 @@
 from __future__ import annotations
 
 import pandas as pd
-from rpy2 import robjects as ro
 
-from .r_df import as_data_frame
-from .rimports import PERFORMANCE_ANALYTICS_PACKAGE, ensure_packages_present
-from .xts import xts_from_df
+from .backend.backend import Backend
+from .backend.R.upside_potential_ratio import \
+    UpsidePotentialRatio as RUpsidePotentialRatio
 
 
 def UpsidePotentialRatio(
-    R: pd.DataFrame, MAR: float = 0.0, method: (str | None) = None
+    R: pd.DataFrame,
+    MAR: float = 0.0,
+    method: (str | None) = None,
+    backend: Backend = Backend.R,
 ) -> pd.DataFrame:
     """Calculate UpsidePotentialRatio."""
-    ensure_packages_present([PERFORMANCE_ANALYTICS_PACKAGE])
-    if method is None:
-        method = "subset"
-    with ro.local_context() as lc:
-        return as_data_frame(
-            ro.r("UpsidePotentialRatio").rcall(  # type: ignore
-                (
-                    ("R", xts_from_df(R)),
-                    ("MAR", MAR),
-                    ("method", method),
-                ),
-                lc,
-            ),
-            lc,
-        )
+    if backend == Backend.R:
+        return RUpsidePotentialRatio(R, MAR=MAR, method=method)
+    raise NotImplementedError(
+        f"Backend {backend.value} not implemented for UpsidePotentialRatio"
+    )

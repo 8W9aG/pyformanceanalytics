@@ -1,24 +1,16 @@
 """The PerformanceAnalytics table.UpDownRatios function."""
 import pandas as pd
-from rpy2 import robjects as ro
 
-from ..r_df import as_data_frame
-from ..rimports import PERFORMANCE_ANALYTICS_PACKAGE, ensure_packages_present
-from ..xts import xts_from_df
+from ..backend.backend import Backend
+from ..backend.R.table.up_down_ratios import UpDownRatios as RUpDownRatios
 
 
-def UpDownRatios(Ra: pd.DataFrame, Rb: pd.DataFrame, digits: int = 4) -> pd.DataFrame:
+def UpDownRatios(
+    Ra: pd.DataFrame, Rb: pd.DataFrame, digits: int = 4, backend: Backend = Backend.R
+) -> pd.DataFrame:
     """Calculate table.UpDownRatios."""
-    ensure_packages_present([PERFORMANCE_ANALYTICS_PACKAGE])
-    with ro.local_context() as lc:
-        return as_data_frame(
-            ro.r("table.UpDownRatios").rcall(  # type: ignore
-                (
-                    ("Ra", xts_from_df(Ra)),
-                    ("Rb", xts_from_df(Rb)),
-                    ("digits", digits),
-                ),
-                lc,
-            ),
-            lc,
-        )
+    if backend == Backend.R:
+        return RUpDownRatios(Ra, Rb, digits=digits)
+    raise NotImplementedError(
+        f"Backend {backend.value} not implemented for table.UpDownRatios"
+    )

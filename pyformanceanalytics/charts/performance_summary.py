@@ -4,12 +4,10 @@ from __future__ import annotations
 
 import pandas as pd
 from PIL import Image
-from rpy2 import robjects as ro
 
-from ..ggplot_img import ggplot_to_image
-from ..rimports import (GGPLOT2_PACKAGE, GRIDEXTRA_PACKAGE,
-                        PERFORMANCE_ANALYTICS_PACKAGE, ensure_packages_present)
-from ..xts import xts_from_df
+from ..backend.backend import Backend
+from ..backend.R.charts.performance_summary import \
+    PerformanceSummary as RPerformanceSummary
 
 
 def PerformanceSummary(
@@ -26,36 +24,25 @@ def PerformanceSummary(
     begin: (list[str] | None) = None,
     legend_loc: (str | None) = None,
     p: float = 0.95,
+    backend: Backend = Backend.R,
 ) -> Image.Image:
     """Calculate charts.PerformanceSummary."""
-    ensure_packages_present(
-        [GGPLOT2_PACKAGE, GRIDEXTRA_PACKAGE, PERFORMANCE_ANALYTICS_PACKAGE]
-    )
-    if methods is None:
-        methods = "none"
-    if begin is None:
-        begin = ["first", "axis"]
-    if legend_loc is None:
-        legend_loc = "topleft"
-    with ro.local_context() as lc:
-        return ggplot_to_image(
-            ro.r("charts.PerformanceSummary").rcall(  # type: ignore
-                (
-                    ("R", xts_from_df(R)),
-                    ("Rf", 0 if Rf is None else xts_from_df(Rf)),
-                    ("main", main),
-                    ("geometric", geometric),
-                    ("methods", methods),
-                    ("width", width),
-                    ("event.labels", event_labels),
-                    ("ylog", ylog),
-                    ("wealth.index", wealth_index),
-                    ("gap", gap),
-                    ("begin", ro.vectors.StrVector(begin)),
-                    ("legend.loc", legend_loc),
-                    ("p", p),
-                    ("plot.engine", "ggplot2"),
-                ),
-                lc,
-            )
+    if backend == Backend.R:
+        return RPerformanceSummary(
+            R,
+            Rf=Rf,
+            main=main,
+            geometric=geometric,
+            methods=methods,
+            width=width,
+            event_labels=event_labels,
+            ylog=ylog,
+            wealth_index=wealth_index,
+            gap=gap,
+            begin=begin,
+            legend_loc=legend_loc,
+            p=p,
         )
+    raise NotImplementedError(
+        f"Backend {backend.value} not implemented for charts.PerformanceSummary"
+    )

@@ -4,14 +4,12 @@ from __future__ import annotations
 
 import numpy as np
 import pandas as pd
-from rpy2 import robjects as ro
 
+from .backend.backend import Backend
+from .backend.R.ETL import ETL as RETL
 from .ETL_clean import ETLCLean
 from .ETL_method import ETLMethod
 from .ETL_portfolio_method import ETLPortfolioMethod
-from .r_df import as_data_frame
-from .rimports import PERFORMANCE_ANALYTICS_PACKAGE, ensure_packages_present
-from .xts import xts_from_df
 
 
 def ETL(
@@ -28,47 +26,29 @@ def ETL(
     invert: bool = True,
     operational: bool = True,
     SE: bool = False,
+    backend: Backend = Backend.R,
 ) -> pd.DataFrame:
     """Calculate ETL."""
-    ensure_packages_present([PERFORMANCE_ANALYTICS_PACKAGE])
-    if method is None:
-        method = ETLMethod.MODIFIED
-    if clean is None:
-        clean = ETLCLean.NONE
-    if portfolio_method is None:
-        portfolio_method = ETLPortfolioMethod.SINGLE
-    if isinstance(method, ETLMethod):
-        method = method.value
-    if isinstance(clean, ETLCLean):
-        clean = clean.value
-    if isinstance(portfolio_method, ETLPortfolioMethod):
-        portfolio_method = portfolio_method.value
-    with ro.local_context() as lc:
-        with (
-            ro.default_converter + ro.numpy2ri.converter + ro.pandas2ri.converter  # type: ignore
-        ).context():
-            return as_data_frame(
-                ro.r("ETL").rcall(  # type: ignore
-                    (
-                        ("R", xts_from_df(R)),
-                        ("p", p),
-                        ("method", method),
-                        ("clean", clean),
-                        (
-                            "weights",
-                            None
-                            if weights is None
-                            else ro.vectors.FloatVector(weights),
-                        ),
-                        ("mu", None if mu is None else ro.vectors.FloatVector(mu)),
-                        ("sigma", sigma),
-                        ("m3", m3),
-                        ("m4", m4),
-                        ("invert", invert),
-                        ("operational", operational),
-                        ("SE", SE),
-                    ),
-                    lc,
-                ),
-                lc,
-            )
+    if backend == Backend.R:
+        if isinstance(method, ETLMethod):
+            method = method.value
+        if isinstance(clean, ETLCLean):
+            clean = clean.value
+        if isinstance(portfolio_method, ETLPortfolioMethod):
+            portfolio_method = portfolio_method.value
+        return RETL(
+            R,
+            p=p,
+            method=method,
+            clean=clean,
+            portfolio_method=portfolio_method,
+            weights=weights,
+            mu=mu,
+            sigma=sigma,
+            m3=m3,
+            m4=m4,
+            invert=invert,
+            operational=operational,
+            SE=SE,
+        )
+    raise NotImplementedError(f"Backend {backend.value} not implemented for ETL")

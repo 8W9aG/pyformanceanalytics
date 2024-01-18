@@ -5,11 +5,9 @@ from __future__ import annotations
 
 import pandas as pd
 from PIL import Image
-from rpy2 import robjects as ro
 
-from ..plot_img import plot_to_image
-from ..rimports import PERFORMANCE_ANALYTICS_PACKAGE, ensure_packages_present
-from ..xts import xts_from_df
+from ..backend.backend import Backend
+from ..backend.R.chart.histogram import Histogram as RHistogram
 
 
 def Histogram(
@@ -38,80 +36,37 @@ def Histogram(
     cex_main: int = 1,
     xaxis: bool = True,
     yaxis: bool = True,
+    backend: Backend = Backend.R,
 ) -> Image.Image:
     """Calculate chart.Histogram."""
-    ensure_packages_present([PERFORMANCE_ANALYTICS_PACKAGE])
-    if breaks is None:
-        breaks = "FD"
-    if xlab is None:
-        xlab = "Returns"
-    if ylab is None:
-        ylab = "Frequency"
-    if methods is None:
-        methods = [
-            "none",
-            "add.density",
-            "add.normal",
-            "add.centered",
-            "add.cauchy",
-            "add.sst",
-            "add.rug",
-            "add.risk",
-            "add.qqplot",
-        ]
-    if colorset is None:
-        colorset = [
-            "lightgray",
-            "#00008F",
-            "#005AFF",
-            "#23FFDC",
-            "#ECFF13",
-            "#FF4A00",
-            "#800000",
-        ]
-    if border_col is None:
-        border_col = "white"
-    if note_color is None:
-        note_color = "darkgrey"
-    with ro.local_context() as lc:
-        return plot_to_image(
-            lambda: ro.r("chart.Histogram").rcall(  # type: ignore
-                (
-                    ("R", xts_from_df(R)),
-                    ("main", main),
-                    ("xlab", xlab),
-                    ("ylab", ylab),
-                    ("methods", ro.vectors.StrVector(methods)),
-                    ("show.outliers", show_outliers),
-                    ("colorset", ro.vectors.StrVector(colorset)),
-                    ("border.col", border_col),
-                    ("lwd", lwd),
-                    ("xlim", xlim),
-                    ("ylim", ylim),
-                    ("element.color", element_color),
-                    (
-                        "note.lines",
-                        None
-                        if note_lines is None
-                        else ro.vectors.FloatVector(note_lines),
-                    ),
-                    (
-                        "note.labels",
-                        None
-                        if note_labels is None
-                        else ro.vectors.StrVector(note_labels),
-                    ),
-                    ("note.cex", note_cex),
-                    ("note.color", note_color),
-                    ("probability", probability),
-                    ("p", p),
-                    ("cex.axis", cex_axis),
-                    ("cex.legend", cex_legend),
-                    ("cex.lab", cex_lab),
-                    ("cex.main", cex_main),
-                    ("xaxis", xaxis),
-                    ("yaxis", yaxis),
-                ),
-                lc,
-            )
+    if backend == Backend.R:
+        return RHistogram(
+            R,
+            breaks=breaks,
+            main=main,
+            xlab=xlab,
+            ylab=ylab,
+            methods=methods,
+            show_outliers=show_outliers,
+            colorset=colorset,
+            border_col=border_col,
+            lwd=lwd,
+            xlim=xlim,
+            ylim=ylim,
+            element_color=element_color,
+            note_lines=note_lines,
+            note_labels=note_labels,
+            note_cex=note_cex,
+            note_color=note_color,
+            probability=probability,
+            p=p,
+            cex_axis=cex_axis,
+            cex_legend=cex_legend,
+            cex_lab=cex_lab,
+            cex_main=cex_main,
+            xaxis=xaxis,
+            yaxis=yaxis,
         )
+    raise NotImplementedError(
+        f"Backend {backend.value} not implemented for chart.Histogram"
+    )

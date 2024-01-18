@@ -3,11 +3,10 @@ from __future__ import annotations
 
 import pandas as pd
 from PIL import Image
-from rpy2 import robjects as ro
 
-from ..plot_img import plot_ro, plot_to_image
-from ..rimports import PERFORMANCE_ANALYTICS_PACKAGE, ensure_packages_present
-from ..xts import xts_from_df
+from ..backend.backend import Backend
+from ..backend.R.chart.rolling_correlation import \
+    RollingCorrelation as RRollingCorrelation
 
 
 def RollingCorrelation(
@@ -17,25 +16,13 @@ def RollingCorrelation(
     xaxis: bool = True,
     legend_loc: (str | None) = None,
     colorset: (list[int] | None) = None,
+    backend: Backend = Backend.R,
 ) -> Image.Image:
     """Calculate chart.RollingCorrelation."""
-    ensure_packages_present([PERFORMANCE_ANALYTICS_PACKAGE])
-    if colorset is None:
-        colorset = list(range(1, 12))
-    with ro.local_context() as lc:
-        return plot_to_image(
-            lambda: plot_ro(
-                ro.r("chart.RollingCorrelation").rcall(  # type: ignore
-                    (
-                        ("Ra", xts_from_df(Ra)),
-                        ("Rb", xts_from_df(Rb)),
-                        ("width", width),
-                        ("xaxis", xaxis),
-                        ("legend.loc", legend_loc),
-                        ("colorset", ro.vectors.IntVector(colorset)),
-                    ),
-                    lc,
-                ),
-                lc,
-            )
+    if backend == Backend.R:
+        return RRollingCorrelation(
+            Ra, Rb, width=width, xaxis=xaxis, legend_loc=legend_loc, colorset=colorset
         )
+    raise NotImplementedError(
+        f"Backend {backend.value} not implemented for chart.RollingCorrelation"
+    )

@@ -1,15 +1,13 @@
 """The Performance Analytics chart.VaRSensitivity function."""
-# pylint: disable=too-complex
 # pylint: disable=too-many-arguments
 from __future__ import annotations
 
 import pandas as pd
 from PIL import Image
-from rpy2 import robjects as ro
 
-from ..plot_img import plot_to_image
-from ..rimports import PERFORMANCE_ANALYTICS_PACKAGE, ensure_packages_present
-from ..xts import xts_from_df
+from ..backend.backend import Backend
+from ..backend.R.chart.va_r_sensitivity import \
+    VaRSensitivity as RVaRSensitivity
 
 
 def VaRSensitivity(
@@ -29,57 +27,28 @@ def VaRSensitivity(
     cex_legend: float = 0.8,
     main: (str | None) = None,
     ylim: (float | None) = None,
+    backend: Backend = Backend.R,
 ) -> Image.Image:
     """Calculate chart.VaRSensitivity."""
-    ensure_packages_present([PERFORMANCE_ANALYTICS_PACKAGE])
-    if methods is None:
-        methods = [
-            "GaussianVaR",
-            "ModifiedVaR",
-            "HistoricalVaR",
-            "GaussianES",
-            "ModifiedES",
-            "HistoricalES",
-        ]
-    if clean is None:
-        clean = ["none", "boudt", "geltner"]
-    if element_color is None:
-        element_color = "darkgray"
-    if xlab is None:
-        xlab = "Confidence Level"
-    if ylab is None:
-        ylab = "Value at Risk"
-    if type_ is None:
-        type_ = "l"
-    if lty is None:
-        lty = [1, 2, 4]
-    if colorset is None:
-        colorset = list(range(1, 12))
-    if pch is None:
-        pch = list(range(1, 12))
-    if legend_loc is None:
-        legend_loc = "bottomleft"
-    with ro.local_context() as lc:
-        return plot_to_image(
-            lambda: ro.r("chart.VaRSensitivity").rcall(  # type: ignore
-                (
-                    ("R", xts_from_df(R)),
-                    ("methods", ro.vectors.StrVector(methods)),
-                    ("clean", ro.vectors.StrVector(clean)),
-                    ("element.color", element_color),
-                    ("reference.grid", reference_grid),
-                    ("xlab", xlab),
-                    ("ylab", ylab),
-                    ("type", type_),
-                    ("lty", ro.vectors.IntVector(lty)),
-                    ("lwd", lwd),
-                    ("colorset", ro.vectors.IntVector(colorset)),
-                    ("pch", ro.vectors.IntVector(pch)),
-                    ("legend.loc", legend_loc),
-                    ("cex.legend", cex_legend),
-                    ("main", main),
-                    ("ylim", ylim),
-                ),
-                lc,
-            )
+    if backend == Backend.R:
+        return RVaRSensitivity(
+            R,
+            methods=methods,
+            clean=clean,
+            element_color=element_color,
+            reference_grid=reference_grid,
+            xlab=xlab,
+            ylab=ylab,
+            type_=type_,
+            lty=lty,
+            lwd=lwd,
+            colorset=colorset,
+            pch=pch,
+            legend_loc=legend_loc,
+            cex_legend=cex_legend,
+            main=main,
+            ylim=ylim,
         )
+    raise NotImplementedError(
+        f"Backend {backend.value} not implemented for chart.VaRSensitivity"
+    )

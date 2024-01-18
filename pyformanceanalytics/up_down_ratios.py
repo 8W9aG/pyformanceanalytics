@@ -2,11 +2,9 @@
 from __future__ import annotations
 
 import pandas as pd
-from rpy2 import robjects as ro
 
-from .r_df import as_data_frame
-from .rimports import PERFORMANCE_ANALYTICS_PACKAGE, ensure_packages_present
-from .xts import xts_from_df
+from .backend.backend import Backend
+from .backend.R.up_down_ratios import UpDownRatios as RUpDownRatios
 
 
 def UpDownRatios(
@@ -14,23 +12,11 @@ def UpDownRatios(
     Rb: pd.DataFrame,
     method: (str | None) = None,
     side: (str | None) = None,
+    backend: Backend = Backend.R,
 ) -> pd.DataFrame:
     """Calculate UpDownRatios."""
-    ensure_packages_present([PERFORMANCE_ANALYTICS_PACKAGE])
-    if method is None:
-        method = "Capture"
-    if side is None:
-        side = "Up"
-    with ro.local_context() as lc:
-        return as_data_frame(
-            ro.r("UpDownRatios").rcall(  # type: ignore
-                (
-                    ("Ra", xts_from_df(Ra)),
-                    ("Rb", xts_from_df(Rb)),
-                    ("method", method),
-                    ("side", side),
-                ),
-                lc,
-            ),
-            lc,
-        )
+    if backend == Backend.R:
+        return RUpDownRatios(Ra, Rb, method=method, side=side)
+    raise NotImplementedError(
+        f"Backend {backend.value} not implemented for UpDownRatios"
+    )

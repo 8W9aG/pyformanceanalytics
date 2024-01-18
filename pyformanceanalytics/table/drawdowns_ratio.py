@@ -2,27 +2,20 @@
 from __future__ import annotations
 
 import pandas as pd
-from rpy2 import robjects as ro
 
-from ..r_df import as_data_frame
-from ..rimports import PERFORMANCE_ANALYTICS_PACKAGE, ensure_packages_present
-from ..xts import xts_from_df
+from ..backend.backend import Backend
+from ..backend.R.table.drawdowns_ratio import DrawdownsRatio as RDrawdownsRatio
 
 
 def DrawdownsRatio(
-    R: pd.DataFrame, Rf: (pd.DataFrame | None) = None, digits: int = 4
+    R: pd.DataFrame,
+    Rf: (pd.DataFrame | None) = None,
+    digits: int = 4,
+    backend: Backend = Backend.R,
 ) -> pd.DataFrame:
     """Calculate table.DrawdownsRatio."""
-    ensure_packages_present([PERFORMANCE_ANALYTICS_PACKAGE])
-    with ro.local_context() as lc:
-        return as_data_frame(
-            ro.r("table.DrawdownsRatio").rcall(  # type: ignore
-                (
-                    ("R", xts_from_df(R)),
-                    ("Rf", 0 if Rf is None else xts_from_df(Rf)),
-                    ("digits", digits),
-                ),
-                lc,
-            ),
-            lc,
-        )
+    if backend == Backend.R:
+        return RDrawdownsRatio(R, Rf=Rf, digits=digits)
+    raise NotImplementedError(
+        f"Backend {backend.value} not implemented for table.DrawdownsRatio"
+    )

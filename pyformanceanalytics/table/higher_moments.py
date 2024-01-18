@@ -2,11 +2,9 @@
 from __future__ import annotations
 
 import pandas as pd
-from rpy2 import robjects as ro
 
-from ..r_df import as_data_frame
-from ..rimports import PERFORMANCE_ANALYTICS_PACKAGE, ensure_packages_present
-from ..xts import xts_from_df
+from ..backend.backend import Backend
+from ..backend.R.table.higher_moments import HigherMoments as RHigherMoments
 
 
 def HigherMoments(
@@ -15,22 +13,11 @@ def HigherMoments(
     Rf: (pd.DataFrame | None) = None,
     digits: int = 4,
     method: (str | None) = None,
+    backend: Backend = Backend.R,
 ) -> pd.DataFrame:
     """Calculate table.HigherMoments."""
-    ensure_packages_present([PERFORMANCE_ANALYTICS_PACKAGE])
-    if method is None:
-        method = "moment"
-    with ro.local_context() as lc:
-        return as_data_frame(
-            ro.r("table.HigherMoments").rcall(  # type: ignore
-                (
-                    ("Ra", xts_from_df(Ra)),
-                    ("Rb", xts_from_df(Rb)),
-                    ("Rf", 0 if Rf is None else xts_from_df(Rf)),
-                    ("digits", digits),
-                    ("method", method),
-                ),
-                lc,
-            ),
-            lc,
-        )
+    if backend == Backend.R:
+        return RHigherMoments(Ra, Rb, Rf=Rf, digits=digits, method=method)
+    raise NotImplementedError(
+        f"Backend {backend.value} not implemented for table.HigherMoments"
+    )

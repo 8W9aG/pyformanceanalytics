@@ -4,11 +4,9 @@ from __future__ import annotations
 
 import pandas as pd
 from PIL import Image
-from rpy2 import robjects as ro
 
-from ..plot_img import plot_to_image
-from ..rimports import PERFORMANCE_ANALYTICS_PACKAGE, ensure_packages_present
-from ..xts import xts_from_df
+from ..backend.backend import Backend
+from ..backend.R.chart.regression import Regression as RRegression
 
 
 def Regression(
@@ -33,47 +31,33 @@ def Regression(
     legend_cex: float = 0.8,
     cex: float = 0.8,
     lwd: int = 2,
+    backend: Backend = Backend.R,
 ) -> Image.Image:
     """Calculate chart.Regression."""
-    ensure_packages_present([PERFORMANCE_ANALYTICS_PACKAGE])
-    if main is None:
-        main = "Title"
-    if colorset is None:
-        colorset = list(range(1, 12))
-    if symbolset is None:
-        symbolset = list(range(1, 12))
-    if element_color is None:
-        element_color = "darkgrey"
-    if fit is None:
-        fit = ["loess", "linear", "conditional"]
-    if family is None:
-        family = ["symmetric", "gaussian"]
-    with ro.local_context() as lc:
-        return plot_to_image(
-            lambda: ro.r("chart.Regression").rcall(  # type: ignore
-                (
-                    ("Ra", xts_from_df(Ra)),
-                    ("Rb", xts_from_df(Rb)),
-                    ("Rf", 0 if Rf is None else xts_from_df(Rf)),
-                    ("excess.returns", excess_returns),
-                    ("reference.grid", reference_grid),
-                    ("main", main),
-                    ("ylab", ylab),
-                    ("xlab", xlab),
-                    ("colorset", ro.vectors.IntVector(colorset)),
-                    ("symbolset", ro.vectors.IntVector(symbolset)),
-                    ("element.color", element_color),
-                    ("legend.loc", legend_loc),
-                    ("ylog", ylog),
-                    ("fit", ro.vectors.StrVector(fit)),
-                    ("span", span),
-                    ("degree", degree),
-                    ("family", ro.vectors.StrVector(family)),
-                    ("evaluation", evaluation),
-                    ("legend.cex", legend_cex),
-                    ("cex", cex),
-                    ("lwd", lwd),
-                ),
-                lc,
-            )
+    if backend == Backend.R:
+        return RRegression(
+            Ra,
+            Rb,
+            Rf=Rf,
+            excess_returns=excess_returns,
+            reference_grid=reference_grid,
+            main=main,
+            ylab=ylab,
+            xlab=xlab,
+            colorset=colorset,
+            symbolset=symbolset,
+            element_color=element_color,
+            legend_loc=legend_loc,
+            ylog=ylog,
+            fit=fit,
+            span=span,
+            degree=degree,
+            family=family,
+            evaluation=evaluation,
+            legend_cex=legend_cex,
+            cex=cex,
+            lwd=lwd,
         )
+    raise NotImplementedError(
+        f"Backend {backend.value} not implemented for chart.Regression"
+    )

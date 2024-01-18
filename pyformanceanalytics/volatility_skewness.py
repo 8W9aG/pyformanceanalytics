@@ -2,29 +2,21 @@
 from __future__ import annotations
 
 import pandas as pd
-from rpy2 import robjects as ro
 
-from .r_df import as_data_frame_or_float
-from .rimports import PERFORMANCE_ANALYTICS_PACKAGE, ensure_packages_present
-from .xts import xts_from_df
+from .backend.backend import Backend
+from .backend.R.volatility_skewness import \
+    VolatilitySkewness as RVolatilitySkewness
 
 
 def VolatilitySkewness(
-    R: pd.DataFrame, MAR: float = 0.0, stat: (str | None) = None
+    R: pd.DataFrame,
+    MAR: float = 0.0,
+    stat: (str | None) = None,
+    backend: Backend = Backend.R,
 ) -> pd.DataFrame | float:
     """Calculate VolatilitySkewness."""
-    ensure_packages_present([PERFORMANCE_ANALYTICS_PACKAGE])
-    if stat is None:
-        stat = "volatility"
-    with ro.local_context() as lc:
-        return as_data_frame_or_float(
-            ro.r("VolatilitySkewness").rcall(  # type: ignore
-                (
-                    ("R", xts_from_df(R)),
-                    ("MAR", MAR),
-                    ("stat", stat),
-                ),
-                lc,
-            ),
-            lc,
-        )
+    if backend == Backend.R:
+        return RVolatilitySkewness(R, MAR=MAR, stat=stat)
+    raise NotImplementedError(
+        f"Backend {backend.value} not implemented for VolatilitySkewness"
+    )

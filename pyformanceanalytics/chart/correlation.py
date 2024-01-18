@@ -3,28 +3,20 @@ from __future__ import annotations
 
 import pandas as pd
 from PIL import Image
-from rpy2 import robjects as ro
 
-from ..plot_img import plot_to_image
-from ..rimports import PERFORMANCE_ANALYTICS_PACKAGE, ensure_packages_present
-from ..xts import xts_from_df
+from ..backend.backend import Backend
+from ..backend.R.chart.correlation import Correlation as RCorrelation
 
 
 def Correlation(
-    R: pd.DataFrame, histogram: bool = True, method: (list[str] | None) = None
+    R: pd.DataFrame,
+    histogram: bool = True,
+    method: (list[str] | None) = None,
+    backend: Backend = Backend.R,
 ) -> Image.Image:
     """Calculate chart.Correlation."""
-    ensure_packages_present([PERFORMANCE_ANALYTICS_PACKAGE])
-    if method is None:
-        method = ["pearson", "kendall", "spearman"]
-    with ro.local_context() as lc:
-        return plot_to_image(
-            lambda: ro.r("chart.Correlation").rcall(  # type: ignore
-                (
-                    ("R", xts_from_df(R)),
-                    ("histogram", histogram),
-                    ("method", ro.vectors.StrVector(method)),
-                ),
-                lc,
-            )
-        )
+    if backend == Backend.R:
+        return RCorrelation(R, histogram=histogram, method=method)
+    raise NotImplementedError(
+        f"Backend {backend.value} not implemented for chart.Correlation"
+    )

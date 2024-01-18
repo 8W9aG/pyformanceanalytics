@@ -4,11 +4,9 @@
 from __future__ import annotations
 
 import pandas as pd
-from rpy2 import robjects as ro
 
-from .r_df import as_data_frame
-from .rimports import PERFORMANCE_ANALYTICS_PACKAGE, ensure_packages_present
-from .xts import xts_from_df
+from .backend.backend import Backend
+from .backend.R.prob_sharpe_ratio import ProbSharpeRatio as RProbSharpeRatio
 
 
 def ProbSharpeRatio(
@@ -23,34 +21,23 @@ def ProbSharpeRatio(
     kr: (float | None) = None,
     ignore_skewness: bool = True,
     ignore_kurtosis: bool = True,
+    backend: Backend = Backend.R,
 ) -> pd.DataFrame:
     """Calculate ProbSharpeRatio."""
-    ensure_packages_present([PERFORMANCE_ANALYTICS_PACKAGE])
-    with ro.local_context() as lc:
-        return as_data_frame(
-            ro.r("ProbSharpeRatio").rcall(  # type: ignore
-                (
-                    ("R", None if R is None else xts_from_df(R)),
-                    ("Rf", 0 if Rf is None else xts_from_df(Rf)),
-                    (
-                        "refSR",
-                        xts_from_df(refSR)
-                        if isinstance(refSR, pd.DataFrame)
-                        else refSR,
-                    ),
-                    ("p", p),
-                    (
-                        "weights",
-                        None if weights is None else ro.vectors.FloatVector(weights),
-                    ),
-                    ("n", n),
-                    ("sr", sr),
-                    ("sk", sk),
-                    ("kr", kr),
-                    ("ignore_skewness", ignore_skewness),
-                    ("ignore_kurtosis", ignore_kurtosis),
-                ),
-                lc,
-            ),
-            lc,
+    if backend == Backend.R:
+        return RProbSharpeRatio(
+            refSR,
+            R=R,
+            Rf=Rf,
+            p=p,
+            weights=weights,
+            n=n,
+            sr=sr,
+            sk=sk,
+            kr=kr,
+            ignore_skewness=ignore_skewness,
+            ignore_kurtosis=ignore_kurtosis,
         )
+    raise NotImplementedError(
+        f"Backend {backend.value} not implemented for ProbSharpeRatio"
+    )

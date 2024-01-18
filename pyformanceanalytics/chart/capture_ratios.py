@@ -4,11 +4,9 @@ from __future__ import annotations
 
 import pandas as pd
 from PIL import Image
-from rpy2 import robjects as ro
 
-from ..plot_img import plot_to_image
-from ..rimports import PERFORMANCE_ANALYTICS_PACKAGE, ensure_packages_present
-from ..xts import xts_from_df
+from ..backend.backend import Backend
+from ..backend.R.chart.capture_ratios import CaptureRatios as RCaptureRatios
 
 
 def CaptureRatios(
@@ -29,41 +27,29 @@ def CaptureRatios(
     cex_lab: int = 1,
     element_color: (str | None) = None,
     benchmark_color: (str | None) = None,
+    backend: Backend = Backend.R,
 ) -> Image.Image:
     """Calculate chart.CaptureRatios."""
-    ensure_packages_present([PERFORMANCE_ANALYTICS_PACKAGE])
-    if main is None:
-        main = "Capture Ratio"
-    if xlab is None:
-        xlab = "Downside Capture"
-    if ylab is None:
-        ylab = "Upside Capture"
-    if element_color is None:
-        element_color = "darkgray"
-    if benchmark_color is None:
-        benchmark_color = "darkgray"
-    with ro.local_context() as lc:
-        return plot_to_image(
-            lambda: ro.r("chart.CaptureRatios").rcall(  # type: ignore
-                (
-                    ("Ra", xts_from_df(Ra)),
-                    ("Rb", xts_from_df(Rb)),
-                    ("main", main),
-                    ("add.names", add_names),
-                    ("xlab", xlab),
-                    ("ylab", ylab),
-                    ("colorset", colorset),
-                    ("symbolset", symbolset),
-                    ("legend.loc", legend_loc),
-                    ("xlim", xlim),
-                    ("ylim", ylim),
-                    ("cex.legend", cex_legend),
-                    ("cex.axis", cex_axis),
-                    ("cex.main", cex_main),
-                    ("cex.lab", cex_lab),
-                    ("element.color", element_color),
-                    ("benchmark.color", benchmark_color),
-                ),
-                lc,
-            )
+    if backend == Backend.R:
+        return RCaptureRatios(
+            Ra,
+            Rb,
+            main=main,
+            add_names=add_names,
+            xlab=xlab,
+            ylab=ylab,
+            colorset=colorset,
+            symbolset=symbolset,
+            legend_loc=legend_loc,
+            xlim=xlim,
+            ylim=ylim,
+            cex_legend=cex_legend,
+            cex_axis=cex_axis,
+            cex_main=cex_main,
+            cex_lab=cex_lab,
+            element_color=element_color,
+            benchmark_color=benchmark_color,
         )
+    raise NotImplementedError(
+        f"Backend {backend.value} not implemented for chart.CaptureRatios"
+    )

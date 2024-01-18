@@ -3,11 +3,9 @@ from __future__ import annotations
 
 import pandas as pd
 from PIL import Image
-from rpy2 import robjects as ro
 
-from ..plot_img import plot_ro, plot_to_image
-from ..rimports import PERFORMANCE_ANALYTICS_PACKAGE, ensure_packages_present
-from ..xts import xts_from_df
+from ..backend.backend import Backend
+from ..backend.R.chart.cum_returns import CumReturns as RCumReturns
 
 
 def CumReturns(
@@ -16,24 +14,17 @@ def CumReturns(
     geometric: bool = True,
     legend_loc: (str | None) = None,
     begin: (list[str] | None) = None,
+    backend: Backend = Backend.R,
 ) -> Image.Image:
     """Calculate chart.CumReturns."""
-    ensure_packages_present([PERFORMANCE_ANALYTICS_PACKAGE])
-    if begin is None:
-        begin = ["first", "axis"]
-    with ro.local_context() as lc:
-        return plot_to_image(
-            lambda: plot_ro(
-                ro.r("chart.CumReturns").rcall(  # type: ignore
-                    (
-                        ("R", xts_from_df(R)),
-                        ("wealth.index", wealth_index),
-                        ("geometric", geometric),
-                        ("legend.loc", legend_loc),
-                        ("begin", ro.vectors.StrVector(begin)),
-                    ),
-                    lc,
-                ),
-                lc,
-            )
+    if backend == Backend.R:
+        return RCumReturns(
+            R,
+            wealth_index=wealth_index,
+            geometric=geometric,
+            legend_loc=legend_loc,
+            begin=begin,
         )
+    raise NotImplementedError(
+        f"Backend {backend.value} not implemented for chart.CumReturns"
+    )

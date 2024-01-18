@@ -4,11 +4,9 @@ from __future__ import annotations
 
 import pandas as pd
 from PIL import Image
-from rpy2 import robjects as ro
 
-from ..plot_img import plot_to_image
-from ..rimports import PERFORMANCE_ANALYTICS_PACKAGE, ensure_packages_present
-from ..xts import xts_from_df
+from ..backend.backend import Backend
+from ..backend.R.chart.QQ_plot import QQPlot as RQQPlot
 
 
 def QQPlot(
@@ -33,45 +31,33 @@ def QQPlot(
     yaxis: bool = True,
     ylim: (float | None) = None,
     distribution_parameter: (str | None) = None,
+    backend: Backend = Backend.R,
 ) -> Image.Image:
     """Calculate chart.QQPlot."""
-    ensure_packages_present([PERFORMANCE_ANALYTICS_PACKAGE])
-    if distributrion is None:
-        distributrion = "norm"
-    if xlab is None:
-        xlab = f"{distributrion} Quantiles"
-    if col is None:
-        col = [1, 4]
-    if line is None:
-        line = ["quartiles", "robust", "none"]
-    if element_color is None:
-        element_color = "darkgray"
-    with ro.local_context() as lc:
-        return plot_to_image(
-            lambda: ro.r("chart.QQPlot").rcall(  # type: ignore
-                (
-                    ("R", xts_from_df(R)),
-                    ("distribution", distributrion),
-                    ("ylab", ylab),
-                    ("xlab", xlab),
-                    ("main", main),
-                    ("envelope", envelope),
-                    ("labels", labels),
-                    ("col", ro.vectors.IntVector(col)),
-                    ("lwd", lwd),
-                    ("pch", pch),
-                    ("cex", cex),
-                    ("line", ro.vectors.StrVector(line)),
-                    ("element.color", element_color),
-                    ("cex.axis", cex_axis),
-                    ("cex.legend", cex_legend),
-                    ("cex.lab", cex_lab),
-                    ("cex.main", cex_main),
-                    ("xaxis", xaxis),
-                    ("yaxis", yaxis),
-                    ("ylim", ylim),
-                    ("distributionParameter", distribution_parameter),
-                ),
-                lc,
-            )
+    if backend == Backend.R:
+        return RQQPlot(
+            R,
+            distributrion=distributrion,
+            ylab=ylab,
+            xlab=xlab,
+            main=main,
+            envelope=envelope,
+            labels=labels,
+            col=col,
+            lwd=lwd,
+            pch=pch,
+            cex=cex,
+            line=line,
+            element_color=element_color,
+            cex_axis=cex_axis,
+            cex_legend=cex_legend,
+            cex_lab=cex_lab,
+            cex_main=cex_main,
+            xaxis=xaxis,
+            yaxis=yaxis,
+            ylim=ylim,
+            distribution_parameter=distribution_parameter,
         )
+    raise NotImplementedError(
+        f"Backend {backend.value} not implemented for chart.QQPlot"
+    )

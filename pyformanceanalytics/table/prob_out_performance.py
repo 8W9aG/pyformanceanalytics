@@ -2,29 +2,21 @@
 from __future__ import annotations
 
 import pandas as pd
-from rpy2 import robjects as ro
 
-from ..r_df import as_data_frame
-from ..rimports import PERFORMANCE_ANALYTICS_PACKAGE, ensure_packages_present
-from ..xts import xts_from_df
+from ..backend.backend import Backend
+from ..backend.R.table.prob_out_performance import \
+    ProbOutPerformance as RProbOutPerformance
 
 
 def ProbOutPerformance(
-    R: pd.DataFrame, Rb: pd.DataFrame, period_lengths: (list[int] | None) = None
+    R: pd.DataFrame,
+    Rb: pd.DataFrame,
+    period_lengths: (list[int] | None) = None,
+    backend: Backend = Backend.R,
 ) -> pd.DataFrame:
     """Calculate table.ProbOutPerformance."""
-    ensure_packages_present([PERFORMANCE_ANALYTICS_PACKAGE])
-    if period_lengths is None:
-        period_lengths = [1, 3, 6, 9, 12, 18, 36]
-    with ro.local_context() as lc:
-        return as_data_frame(
-            ro.r("table.ProbOutPerformance").rcall(  # type: ignore
-                (
-                    ("R", xts_from_df(R)),
-                    ("Rb", xts_from_df(Rb)),
-                    ("period_lengths", ro.vectors.IntVector(period_lengths)),
-                ),
-                lc,
-            ),
-            lc,
-        )
+    if backend == Backend.R:
+        return RProbOutPerformance(R, Rb, period_lengths=period_lengths)
+    raise NotImplementedError(
+        f"Backend {backend.value} not implemented for table.ProbOutPerformance"
+    )

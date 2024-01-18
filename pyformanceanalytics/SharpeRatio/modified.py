@@ -2,11 +2,9 @@
 from __future__ import annotations
 
 import pandas as pd
-from rpy2 import robjects as ro
 
-from ..r_df import as_data_frame
-from ..rimports import PERFORMANCE_ANALYTICS_PACKAGE, ensure_packages_present
-from ..xts import xts_from_df
+from ..backend.backend import Backend
+from ..backend.R.SharpeRatio.modified import modified as Rmodified
 from .modified_function import ModifiedFunction
 
 
@@ -16,24 +14,13 @@ def modified(
     p: float = 0.95,
     FUN: (str | ModifiedFunction | None) = None,
     weights: (pd.DataFrame | None) = None,
+    backend: Backend = Backend.R,
 ) -> pd.DataFrame:
     """Calculate SharpeRatio.modified."""
-    ensure_packages_present([PERFORMANCE_ANALYTICS_PACKAGE])
-    if FUN is None:
-        FUN = ModifiedFunction.STD_DEV
-    if isinstance(FUN, ModifiedFunction):
-        FUN = FUN.value
-    with ro.local_context() as lc:
-        return as_data_frame(
-            ro.r("SharpeRatio.modified").rcall(  # type: ignore
-                (
-                    ("R", xts_from_df(R)),
-                    ("Rf", 0 if Rf is None else xts_from_df(Rf)),
-                    ("p", p),
-                    ("FUN", FUN),
-                    ("weights", weights),
-                ),
-                lc,
-            ),
-            lc,
-        )
+    if backend == Backend.R:
+        if isinstance(FUN, ModifiedFunction):
+            FUN = FUN.value
+        return Rmodified(R, Rf=Rf, p=p, FUN=FUN, weights=weights)
+    raise NotImplementedError(
+        f"Backend {backend.value} not implemented for SharpeRatio.modified"
+    )

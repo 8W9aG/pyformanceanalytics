@@ -2,24 +2,17 @@
 from __future__ import annotations
 
 import pandas as pd
-from rpy2 import robjects as ro
 
-from .r_df import as_data_frame
-from .rimports import PERFORMANCE_ANALYTICS_PACKAGE, ensure_packages_present
-from .xts import xts_from_df
+from .backend.backend import Backend
+from .backend.R.martin_ratio import MartinRatio as RMartinRatio
 
 
-def MartinRatio(R: pd.DataFrame, Rf: (pd.DataFrame | None) = None) -> pd.DataFrame:
+def MartinRatio(
+    R: pd.DataFrame, Rf: (pd.DataFrame | None) = None, backend: Backend = Backend.R
+) -> pd.DataFrame:
     """Calculate MartinRatio."""
-    ensure_packages_present([PERFORMANCE_ANALYTICS_PACKAGE])
-    with ro.local_context() as lc:
-        return as_data_frame(
-            ro.r("MartinRatio").rcall(  # type: ignore
-                (
-                    ("R", xts_from_df(R)),
-                    ("Rf", 0 if Rf is None else xts_from_df(Rf)),
-                ),
-                lc,
-            ),
-            lc,
-        )
+    if backend == Backend.R:
+        return RMartinRatio(R, Rf=Rf)
+    raise NotImplementedError(
+        f"Backend {backend.value} not implemented for MartinRatio"
+    )

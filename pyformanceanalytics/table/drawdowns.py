@@ -1,27 +1,20 @@
 """The PerformanceAnalytics table.Drawdowns function."""
 import pandas as pd
-from rpy2 import robjects as ro
 
-from ..r_df import as_data_frame
-from ..rimports import PERFORMANCE_ANALYTICS_PACKAGE, ensure_packages_present
-from ..xts import xts_from_df
+from ..backend.backend import Backend
+from ..backend.R.table.drawdowns import Drawdowns as RDrawdowns
 
 
 def Drawdowns(
-    R: pd.DataFrame, top: int = 5, digits: int = 4, geometric: bool = True
+    R: pd.DataFrame,
+    top: int = 5,
+    digits: int = 4,
+    geometric: bool = True,
+    backend: Backend = Backend.R,
 ) -> pd.DataFrame:
     """Calculate table.Drawdowns."""
-    ensure_packages_present([PERFORMANCE_ANALYTICS_PACKAGE])
-    with ro.local_context() as lc:
-        return as_data_frame(
-            ro.r("table.Drawdowns").rcall(  # type: ignore
-                (
-                    ("R", xts_from_df(R)),
-                    ("top", top),
-                    ("digits", digits),
-                    ("geometric", geometric),
-                ),
-                lc,
-            ),
-            lc,
-        )
+    if backend == Backend.R:
+        return RDrawdowns(R, top=top, digits=digits, geometric=geometric)
+    raise NotImplementedError(
+        f"Backend {backend.value} not implemented for table.Drawdowns"
+    )

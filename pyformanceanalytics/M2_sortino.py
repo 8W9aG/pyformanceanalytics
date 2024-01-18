@@ -2,25 +2,15 @@
 from __future__ import annotations
 
 import pandas as pd
-from rpy2 import robjects as ro
 
-from .r_df import as_data_frame
-from .rimports import PERFORMANCE_ANALYTICS_PACKAGE, ensure_packages_present
-from .xts import xts_from_df
+from .backend.backend import Backend
+from .backend.R.M2_sortino import M2Sortino as RM2Sortino
 
 
-def M2Sortino(Ra: pd.DataFrame, Rb: pd.DataFrame, MAR: float) -> pd.DataFrame:
+def M2Sortino(
+    Ra: pd.DataFrame, Rb: pd.DataFrame, MAR: float, backend: Backend = Backend.R
+) -> pd.DataFrame:
     """Calculate M2Sortino."""
-    ensure_packages_present([PERFORMANCE_ANALYTICS_PACKAGE])
-    with ro.local_context() as lc:
-        return as_data_frame(
-            ro.r("M2Sortino").rcall(  # type: ignore
-                (
-                    ("Ra", xts_from_df(Ra)),
-                    ("Rb", xts_from_df(Rb)),
-                    ("MAR", MAR),
-                ),
-                lc,
-            ),
-            lc,
-        )
+    if backend == Backend.R:
+        return RM2Sortino(Ra, Rb, MAR)
+    raise NotImplementedError(f"Backend {backend.value} not implemented for M2Sortino")

@@ -2,34 +2,21 @@
 from __future__ import annotations
 
 import pandas as pd
-from rpy2 import robjects as ro
 
+from .backend.backend import Backend
+from .backend.R.kurtosis import kurtosis as Rkurtosis
 from .kurtosis_method import KurtosisMethod
-from .r_df import as_data_frame_or_float
-from .rimports import PERFORMANCE_ANALYTICS_PACKAGE, ensure_packages_present
-from .xts import xts_from_df
 
 
 def kurtosis(
     x: pd.DataFrame,
     na_rm: bool = False,
     method: (str | KurtosisMethod | None) = None,
+    backend: Backend = Backend.R,
 ) -> pd.DataFrame | float:
     """Calculate kurtosis."""
-    ensure_packages_present([PERFORMANCE_ANALYTICS_PACKAGE])
-    if method is None:
-        method = KurtosisMethod.MOMENT
-    if isinstance(method, KurtosisMethod):
-        method = method.value
-    with ro.local_context() as lc:
-        return as_data_frame_or_float(
-            ro.r("kurtosis").rcall(  # type: ignore
-                (
-                    ("x", xts_from_df(x)),
-                    ("na.rm", na_rm),
-                    ("method", method),
-                ),
-                lc,
-            ),
-            lc,
-        )
+    if backend == Backend.R:
+        if isinstance(method, KurtosisMethod):
+            method = method.value
+        return Rkurtosis(x, na_rm=na_rm, method=method)
+    raise NotImplementedError(f"Backend {backend.value} not implemented for kurtosis")

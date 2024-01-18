@@ -2,11 +2,9 @@
 from __future__ import annotations
 
 import pandas as pd
-from rpy2 import robjects as ro
 
-from ..r_df import as_data_frame
-from ..rimports import PERFORMANCE_ANALYTICS_PACKAGE, ensure_packages_present
-from ..xts import xts_from_df
+from ..backend.backend import Backend
+from ..backend.R.table.rolling_periods import RollingPeriods as RRollingPeriods
 
 
 def RollingPeriods(
@@ -14,23 +12,13 @@ def RollingPeriods(
     periods: (list[int] | None) = None,
     funcs_names: (list[str] | None) = None,
     digits: int = 4,
+    backend: Backend = Backend.R,
 ) -> pd.DataFrame:
     """Calculate table.RollingPeriods."""
-    ensure_packages_present([PERFORMANCE_ANALYTICS_PACKAGE])
-    if periods is None:
-        periods = [12, 36, 60]
-    if funcs_names is None:
-        funcs_names = ["Correlation", "Beta"]
-    with ro.local_context() as lc:
-        return as_data_frame(
-            ro.r("table.RollingPeriods").rcall(  # type: ignore
-                (
-                    ("R", xts_from_df(R)),
-                    ("periods", ro.vectors.IntVector(periods)),
-                    ("funcs.names", ro.vectors.StrVector(funcs_names)),
-                    ("digits", digits),
-                ),
-                lc,
-            ),
-            lc,
+    if backend == Backend.R:
+        return RRollingPeriods(
+            R, periods=periods, funcs_names=funcs_names, digits=digits
         )
+    raise NotImplementedError(
+        f"Backend {backend.value} not implemented for table.RollingPeriods"
+    )

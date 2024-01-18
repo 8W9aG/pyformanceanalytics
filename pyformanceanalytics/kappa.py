@@ -3,25 +3,18 @@
 from __future__ import annotations
 
 import pandas as pd
-from rpy2 import robjects as ro
 
-from .r_df import as_data_frame_or_float
-from .rimports import PERFORMANCE_ANALYTICS_PACKAGE, ensure_packages_present
-from .xts import xts_from_df
+from .backend.backend import Backend
+from .backend.R.kappa import Kappa as RKappa
 
 
-def Kappa(R: pd.DataFrame, MAR: float = 0.005, l: int = 2) -> pd.DataFrame | float:  # noqa: E741
+def Kappa(
+    R: pd.DataFrame,
+    MAR: float = 0.005,
+    l: int = 2,  # noqa: E741
+    backend: Backend = Backend.R,
+) -> pd.DataFrame | float:
     """Calculate Kappa."""
-    ensure_packages_present([PERFORMANCE_ANALYTICS_PACKAGE])
-    with ro.local_context() as lc:
-        return as_data_frame_or_float(
-            ro.r("Kappa").rcall(  # type: ignore
-                (
-                    ("R", xts_from_df(R)),
-                    ("MAR", MAR),
-                    ("l", l),
-                ),
-                lc,
-            ),
-            lc,
-        )
+    if backend == Backend.R:
+        return RKappa(R, MAR=MAR, l=l)
+    raise NotImplementedError(f"Backend {backend.value} not implemented for Kappa")

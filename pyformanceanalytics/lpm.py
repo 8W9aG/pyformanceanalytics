@@ -2,11 +2,9 @@
 from __future__ import annotations
 
 import pandas as pd
-from rpy2 import robjects as ro
 
-from .r_df import as_data_frame
-from .rimports import PERFORMANCE_ANALYTICS_PACKAGE, ensure_packages_present
-from .xts import xts_from_df
+from .backend.backend import Backend
+from .backend.R.lpm import lpm as Rlpm
 
 
 def lpm(
@@ -15,20 +13,9 @@ def lpm(
     threshold: int = 0,
     about_mean: bool = False,
     SE: bool = False,
+    backend: Backend = Backend.R,
 ) -> pd.DataFrame:
     """Calculate lpm."""
-    ensure_packages_present([PERFORMANCE_ANALYTICS_PACKAGE])
-    with ro.local_context() as lc:
-        return as_data_frame(
-            ro.r("lpm").rcall(  # type: ignore
-                (
-                    ("R", xts_from_df(R)),
-                    ("n", n),
-                    ("threshold", threshold),
-                    ("about.mean", about_mean),
-                    ("SE", SE),
-                ),
-                lc,
-            ),
-            lc,
-        )
+    if backend == Backend.R:
+        return Rlpm(R, n=n, threshold=threshold, about_mean=about_mean, SE=SE)
+    raise NotImplementedError(f"Backend {backend.value} not implemented for lpm")

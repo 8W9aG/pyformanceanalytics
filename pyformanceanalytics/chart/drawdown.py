@@ -3,29 +3,20 @@ from __future__ import annotations
 
 import pandas as pd
 from PIL import Image
-from rpy2 import robjects as ro
 
-from ..plot_img import plot_ro, plot_to_image
-from ..rimports import PERFORMANCE_ANALYTICS_PACKAGE, ensure_packages_present
-from ..xts import xts_from_df
+from ..backend.backend import Backend
+from ..backend.R.chart.drawdown import Drawdown as RDrawdown
 
 
 def Drawdown(
-    R: pd.DataFrame, geometric: bool = True, legend_loc: (str | None) = None
+    R: pd.DataFrame,
+    geometric: bool = True,
+    legend_loc: (str | None) = None,
+    backend: Backend = Backend.R,
 ) -> Image.Image:
     """Calculate chart.Drawdown."""
-    ensure_packages_present([PERFORMANCE_ANALYTICS_PACKAGE])
-    with ro.local_context() as lc:
-        return plot_to_image(
-            lambda: plot_ro(
-                ro.r("chart.Drawdown").rcall(  # type: ignore
-                    (
-                        ("R", xts_from_df(R)),
-                        ("geometric", geometric),
-                        ("legend.loc", legend_loc),
-                    ),
-                    lc,
-                ),
-                lc,
-            )
-        )
+    if backend == Backend.R:
+        return RDrawdown(R, geometric=geometric, legend_loc=legend_loc)
+    raise NotImplementedError(
+        f"Backend {backend.value} not implemented for chart.Drawdown"
+    )

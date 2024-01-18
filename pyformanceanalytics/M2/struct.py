@@ -3,29 +3,18 @@ from __future__ import annotations
 
 import numpy as np
 import pandas as pd
-from rpy2 import robjects as ro
-from rpy2.robjects import numpy2ri
 
-from ..rimports import PERFORMANCE_ANALYTICS_PACKAGE, ensure_packages_present
-from ..xts import xts_from_df
+from ..backend.backend import Backend
+from ..backend.R.M2.struct import struct as Rstruct
 
 
 def struct(
-    R: pd.DataFrame, struct_type: (str | None) = None, f: (pd.DataFrame | None) = None
+    R: pd.DataFrame,
+    struct_type: (str | None) = None,
+    f: (pd.DataFrame | None) = None,
+    backend: Backend = Backend.R,
 ) -> np.ndarray:
     """Calculate M2.struct."""
-    ensure_packages_present([PERFORMANCE_ANALYTICS_PACKAGE])
-    if struct_type is None:
-        struct_type = "Indep"
-    with ro.local_context() as lc:
-        with (ro.default_converter + numpy2ri.converter).context():
-            return np.array(
-                ro.r("M2.struct").rcall(  # type: ignore
-                    (
-                        ("R", xts_from_df(R)),
-                        ("struct", struct_type),
-                        ("f", f),
-                    ),
-                    lc,
-                )
-            )
+    if backend == Backend.R:
+        return Rstruct(R, struct_type=struct_type, f=f)
+    raise NotImplementedError(f"Backend {backend.value} not implemented for M2.struct")

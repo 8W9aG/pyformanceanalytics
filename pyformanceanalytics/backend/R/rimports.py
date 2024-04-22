@@ -18,7 +18,6 @@ _IMPORTED_PACKAGES: dict[
     str, (rpackages.InstalledSTPackage | rpackages.InstalledPackage)  # type: ignore
 ] = {}
 _VERSIONED_PACKAGES = {
-    GGPLOT2_PACKAGE: "https://cran.r-project.org/src/contrib/ggplot2_3.4.4.tar.gz",
     GRIDEXTRA_PACKAGE: "https://cran.r-project.org/src/contrib/gridExtra_2.3.tar.gz",
 }
 
